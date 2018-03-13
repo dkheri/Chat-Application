@@ -5,29 +5,31 @@
  */
 package assignment1;
 
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-
+import static assignment1.Values.*;
+import java.io.IOException;
 /**
  *
  * @author Meluleki
  */
-public class CServer implements Cprotocol{
+public class CServer{
+    
+    private static long Port;
+    private ServerSocket server;
     private static ArrayList<Socket> clientSockets;
     private static ArrayList<String> loginNames;
-    
-    public void sendStatus(int code, String Descript){
-        
-    }
 
-    @Override
-    public void sendMessage(Message msg) {
+    public CServer() throws IOException {
+        server= new ServerSocket((int)SERVER_PORT_NUMBER);
+        clientSockets= new ArrayList<>();
+        loginNames= new ArrayList<>();
+        connect();
     }
-
-    @Override
-    public void recMessage(Message msg) {
-        
+    public void connect() throws IOException{
+        while(true){
+            Socket clienSocket = this.server.accept();
+        }
     }
-    
-    
 }

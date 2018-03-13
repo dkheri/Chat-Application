@@ -9,13 +9,7 @@ package assignment1;
  *
  * @author Meluleki
  */
-public class Assignment1 {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
-    
+public class Values {
+    public final static long SERVER_PORT_NUMBER=6666;
+    public static String SERVER_IP_ADDRESS="197.12.12.1";
 }
