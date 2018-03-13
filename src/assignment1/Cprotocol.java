@@ -10,6 +10,8 @@ package assignment1;
  * @author Meluleki
  */
 public interface Cprotocol {
-    public void sendMessage(String message, String Type, String receiver);
-    public void recMessage();
+
+    public void sendMessage(Message msg);
+
+    public void recMessage(Message msg);
 }

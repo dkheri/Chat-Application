@@ -12,11 +12,21 @@ import java.util.ArrayList;
  *
  * @author Meluleki
  */
-public class CServer {
+public class CServer implements Cprotocol{
     private static ArrayList<Socket> clientSockets;
     private static ArrayList<String> loginNames;
     
     public void sendStatus(int code, String Descript){
+        
+    }
+
+    @Override
+    public void sendMessage(Message msg) {
+    }
+
+    @Override
+    public void recMessage(Message msg) {
+        
     }
     
     
