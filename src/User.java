@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 import java.net.Socket;
 
@@ -35,3 +36,40 @@ public class User {
         return this.username+", "+this.password;
     }
 }
+=======
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+
+/**
+ *
+ * @author Meluleki
+ */
+public class User {
+
+    private String username;
+    private String password;
+    private String currentAdress;
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+    public void setCurrentAdd(String add){
+        this.currentAdress=add;
+    }
+    public String getCurrentAdd(){
+        return this.currentAdress;
+    }
+    boolean isCorrect(User u) {
+        return ((u.username.equals(this.username)) && u.password.equals(this.password));
+    }
+    @Override
+    public String toString(){
+        return this.username+", "+this.password;
+    }
+}
+>>>>>>> refs/remotes/origin/master
