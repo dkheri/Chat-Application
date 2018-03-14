@@ -3,31 +3,40 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class Client implements Runnable {
+public class Client  {
 
     static ChatGUI cg;
-    public BufferedReader in;
-    public PrintWriter out;
+    public ObjectInputStream obin;
+    public ObjectOutputStream obout;
 
-    public void listen() throws Exception {
 
-        String incoming;
-        while (!((incoming = in.readLine()).equals("Out"))) {
+    public Client(ObjectInputStream obin,ObjectOutputStream obout)
+    {
 
-            System.out.println(incoming);
-
-        }
+        this.obin = obin;
+        this.obout = obout;
 
     }
 
-    public void run() {
-        try {
-            listen();
-        } catch (Exception e) {
-            e.getMessage();
-        }
+    // public void listen() throws Exception {
 
-    }
+    //     String incoming;
+    //     while (!((incoming = in.readLine()).equals("Out"))) {
+
+    //         System.out.println(incoming);
+
+    //     }
+
+    // }
+
+    // public void run() {
+    //     try {
+    //         listen();
+    //     } catch (Exception e) {
+    //         e.getMessage();
+    //     }
+
+   // }
 
     public static void createMessage(String msg) {
         cg.putToTA(msg);
@@ -46,46 +55,63 @@ public class Client implements Runnable {
 
     public static void main(String[] args) throws IOException {
 
-        String hostName = "localhost";
-        int portNumber = 5000;
+        String hostName = Values.SERVER_IP_ADDRESS;
+        int portNumber = (int)Values.SERVER_PORT_NUMBER;
 
         cg = new ChatGUI();
         cg.setVisible(true);
-//        try (
-//                Socket socket = new Socket(hostName, portNumber);
-//                PrintWriter out
-//                = new PrintWriter(socket.getOutputStream(), true);
-//                BufferedReader in
-//                = new BufferedReader(
-//                        new InputStreamReader(socket.getInputStream()));
-//                Scanner stdIn = new Scanner(System.in);) {
-//
-//            System.out.println("Username:");
-//            String name = stdIn.nextLine();
-//
-//            Client c = new Client();
-//            c.in = in;
-//            Thread t = new Thread(c);
-//            t.start();
-//
-//            c.out = out;
-//
-//            //            String userInput;
-//            // Message msg; 
-//            while (true) {
-////                msg=createMessage();
-////                sendMessage();
-//                // out.println(stdIn.nextLine());
-//            }
-//
-//        } catch (UnknownHostException e) {
-//            System.err.println("Don't know about host " + hostName);
-//            System.exit(1);
-//        } catch (IOException e) {
-//            System.err.println("Couldn't get I/O for the connection to "
-//                    + hostName);
-//            System.exit(1);
-//        }
-//    }
-    }
+       try (
+               Socket clientSocket = new Socket(hostName, portNumber);
+
+               // PrintWriter out
+               // = new PrintWriter(socket.getOutputStream(), true);
+               // BufferedReader in
+               // = new BufferedReader(
+               //         new InputStreamReader(socket.getInputStream()));
+               // Scanner stdIn = new Scanner(System.in);) {
+
+
+              ObjectInputStream obin = new ObjectInputStream(clientSocket.getInputStream());
+              ObjectOutputStream obout = new ObjectOutputStream(clientSocket.getOutputStream());
+            )
+            
+            {
+        {
+           //System.out.println("Username:");
+           //String name = stdIn.nextLine();
+           Message Username=new Message("Connecting",cg.getUserName());
+
+           
+           Client c = new Client(obin,obout);
+           c.obout.writeObject(Username);
+
+
+
+
+           
+           // Thread t = new Thread(c);
+           // t.start();
+
+
+           
+
+
+           //            String userInput;
+           // Message msg; 
+           //while (true) {
+//                msg=createMessage();
+//                sendMessage();
+               // out.println(stdIn.nextLine());
+           }
+
+       } catch (UnknownHostException e) {
+           System.err.println("Don't know about host " + hostName);
+           System.exit(1);
+       } catch (IOException e) {
+           System.err.println("Couldn't get I/O for the connection to "
+                   + hostName);
+           System.exit(1);
+       }
+   }
+    
 }
