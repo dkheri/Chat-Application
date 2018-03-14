@@ -295,6 +295,14 @@ public class ChatGUI extends javax.swing.JFrame {
     void putToTA(String m){
         taMsgs.append(m);
     }
+
+    String getUserName()
+    {
+
+        return txtUser.getText();
+    }
+
+
     /**
      * @param args the command line arguments
      */
