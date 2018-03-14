@@ -23,7 +23,7 @@ public class Message implements Serializable{
     public Message(String mType, String recipent, String sender, String message) {
         this.mType = mType;
         this.recipent = recipent;
-        this.destFor = destFor;
+        this.sender = sender;
         this.message = message;
     }
 
@@ -31,7 +31,7 @@ public class Message implements Serializable{
     {
         this.mType = mType;
         this.recipent = null;
-        this.destFor = null
+        this.sender = null
         this.message = message;
 
     }
