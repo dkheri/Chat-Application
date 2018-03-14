@@ -20,11 +20,20 @@ public class Message implements Serializable{
     
 //    private File filetoSend;
 
-    public Message(String mType, String recipent, String destFor, String message) {
+    public Message(String mType, String recipent, String sender, String message) {
         this.mType = mType;
         this.recipent = recipent;
         this.destFor = destFor;
         this.message = message;
+    }
+
+    public Message(String mType,String message)
+    {
+        this.mType = mType;
+        this.recipent = null;
+        this.destFor = null
+        this.message = message;
+
     }
 
     
