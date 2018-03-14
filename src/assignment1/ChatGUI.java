@@ -6,9 +6,6 @@
 package assignment1;
 
 import java.io.File;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Stage;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
