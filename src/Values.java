@@ -11,5 +11,5 @@
  */
 public final class Values {
     public final static long SERVER_PORT_NUMBER=6666;
-    public static String SERVER_IP_ADDRESS="197.12.12.1";
+    public static String SERVER_IP_ADDRESS="localhost";
 }

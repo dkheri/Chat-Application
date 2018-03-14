@@ -2,44 +2,44 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Client  {
+public class Client {
 
     static ChatGUI cg;
-    public ObjectInputStream obin;
-    public ObjectOutputStream obout;
+    public static ObjectInputStream obin;
+    public static ObjectOutputStream obout;
+    Socket client=null;
 
-
-    public Client(ObjectInputStream obin,ObjectOutputStream obout)
-    {
-
-        this.obin = obin;
-        this.obout = obout;
-
+    public Client() throws IOException {
+        System.out.println("hERE");
+        client= new Socket(Values.SERVER_IP_ADDRESS, (int) Values.SERVER_PORT_NUMBER);
+        Client.obin = new ObjectInputStream(client.getInputStream());
+        Client.obout = new ObjectOutputStream(client.getOutputStream());
+        Client.obout.flush();
+        System.out.println("In here");
+        cg = new ChatGUI();
+        cg.setVisible(true);
     }
 
     // public void listen() throws Exception {
-
     //     String incoming;
     //     while (!((incoming = in.readLine()).equals("Out"))) {
-
     //         System.out.println(incoming);
-
     //     }
-
     // }
-
     // public void run() {
     //     try {
     //         listen();
     //     } catch (Exception e) {
     //         e.getMessage();
     //     }
-
-   // }
-
-    public static void createMessage(String msg) {
+    // }
+    public static void createMessage(String msg) throws IOException {
         cg.putToTA(msg);
+        Message Username = new Message("Connecting", cg.getUserName());
+        obout.writeObject(Username);
         //@DK MESSAGE 
         //SERVER WILL CHECK IF USER IS THER OR NOT IF YES PASS ON THE MESSAGE
 //      	String dest,message;
@@ -53,65 +53,12 @@ public class Client  {
         // out and send msg object to server if user is there it will pass it on if not it will discard it and prompt user to retry
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args){
+        try {
+            Client c= new Client();
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-        String hostName = Values.SERVER_IP_ADDRESS;
-        int portNumber = (int)Values.SERVER_PORT_NUMBER;
-
-        cg = new ChatGUI();
-        cg.setVisible(true);
-       try (
-               Socket clientSocket = new Socket(hostName, portNumber);
-
-               // PrintWriter out
-               // = new PrintWriter(socket.getOutputStream(), true);
-               // BufferedReader in
-               // = new BufferedReader(
-               //         new InputStreamReader(socket.getInputStream()));
-               // Scanner stdIn = new Scanner(System.in);) {
-
-
-              ObjectInputStream obin = new ObjectInputStream(clientSocket.getInputStream());
-              ObjectOutputStream obout = new ObjectOutputStream(clientSocket.getOutputStream());
-            )
-            
-            {
-        {
-           //System.out.println("Username:");
-           //String name = stdIn.nextLine();
-           Message Username=new Message("Connecting",cg.getUserName());
-
-           
-           Client c = new Client(obin,obout);
-           c.obout.writeObject(Username);
-
-
-
-
-           
-           // Thread t = new Thread(c);
-           // t.start();
-
-
-           
-
-
-           //            String userInput;
-           // Message msg; 
-           //while (true) {
-//                msg=createMessage();
-//                sendMessage();
-               // out.println(stdIn.nextLine());
-           }
-
-       } catch (UnknownHostException e) {
-           System.err.println("Don't know about host " + hostName);
-           System.exit(1);
-       } catch (IOException e) {
-           System.err.println("Couldn't get I/O for the connection to "
-                   + hostName);
-           System.exit(1);
-       }
-   }
-    
 }

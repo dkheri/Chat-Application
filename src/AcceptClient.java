@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author Meluleki
  */
-public class AcceptClient implements Runnable, Cprotocol {
+public class AcceptClient extends Thread implements Cprotocol {
 
     public Socket clientSocket;
     public ObjectInputStream obin;
@@ -24,8 +24,14 @@ public class AcceptClient implements Runnable, Cprotocol {
 
     public AcceptClient(Socket cs) throws IOException {
         this.clientSocket = cs;
-        this.obin = new ObjectInputStream(clientSocket.getInputStream());
-        this.obout = new ObjectOutputStream(clientSocket.getOutputStream());
+        this.obout = new ObjectOutputStream(cs.getOutputStream());
+        obout.flush();
+        this.obin = new ObjectInputStream(cs.getInputStream());
+        System.out.println("here");
+        
+        
+        start();
+        
     }
 
     @Override
@@ -53,6 +59,7 @@ public class AcceptClient implements Runnable, Cprotocol {
                 String userTemp=msg.message;
                 CServer.addClient(userTemp, clientSocket);
                 sendMessage(new Message("Connected", userTemp));
+                System.out.println(msg.message);
                 
             }
         }
