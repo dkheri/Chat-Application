@@ -1,3 +1,6 @@
+
+import java.net.Socket;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,17 +16,16 @@ public class User {
 
     private String username;
     private String password;
-    private String currentAdress;
+    private Socket currentSocket;
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public User(String user) {
+        this.username = user;
     }
-    public void setCurrentAdd(String add){
-        this.currentAdress=add;
+    public void setCurrentSocket(Socket add){
+        this.currentSocket=add;
     }
-    public String getCurrentAdd(){
-        return this.currentAdress;
+    public Socket getCurrentAdd(){
+        return this.currentSocket;
     }
     boolean isCorrect(User u) {
         return ((u.username.equals(this.username)) && u.password.equals(this.password));

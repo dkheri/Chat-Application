@@ -49,7 +49,9 @@ public class AcceptClient implements Runnable, Cprotocol {
     public void recMessage(Message msg) {
         switch (msg.mType) {
             case "Login": {
-
+                String userTemp=msg.message;
+                CServer.addClient(userTemp, clientSocket);
+                
             }
         }
     }

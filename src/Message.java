@@ -19,7 +19,7 @@ public class Message implements Serializable{
     
     
 //    private File filetoSend;
-
+    
     public Message(String mType, String recipent, String destFor, String message) {
         this.mType = mType;
         this.recipent = recipent;

@@ -15,6 +15,8 @@ import java.io.IOException;
 public class CServer {
 
     private static long Port;
+
+   
     private final ServerSocket server;
     private static ArrayList<Socket> clientSockets;
     private static ArrayList<String> loginNames;
@@ -32,12 +34,14 @@ public class CServer {
             Thread runThread = new Thread(new AcceptClient(clienSocket));
         }
     }
-
-    public static void addClient() {
-
+    
+    public static void addClient(String userTemp, Socket clientSocket) {
+    
     }
 
     public static void removeClient() {
 
     }
+    
+    
 }
