@@ -38,7 +38,7 @@ public class Client {
     // }
     public static void createMessage(String msg) throws IOException {
         cg.putToTA(msg);
-        Message Username = new Message("Connecting", cg.getUserName());
+        Message Username = new Message(Values.CONNECTIN_PROTOCOL, cg.getUserName());
         obout.writeObject(Username);
         //@DK MESSAGE 
         //SERVER WILL CHECK IF USER IS THER OR NOT IF YES PASS ON THE MESSAGE

@@ -307,6 +307,7 @@ public class ChatGUI extends javax.swing.JFrame {
     {
 
         return txtUser.getText();
+        
     }
 
 

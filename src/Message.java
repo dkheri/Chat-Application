@@ -16,7 +16,7 @@ public class Message implements Serializable{
     public final String recipent;
     public final String sender;
     public final String message;
-    
+    public final Object obMessage=null;
     
 //    private File filetoSend;
 
@@ -27,6 +27,13 @@ public class Message implements Serializable{
         this.message = message;
     }
 
+    public Message(String mt,Object o) {
+        this.mType = mt;
+        this.recipent = null;
+        this.sender = null;
+        this.message = null;
+    }
+   
     public Message(String mType,String message)
     {
         this.mType = mType;
