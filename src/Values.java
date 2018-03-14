@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package assignment1;
+
 
 /**
  *
  * @author Meluleki
  */
-public class Values {
+public final class Values {
     public final static long SERVER_PORT_NUMBER=6666;
     public static String SERVER_IP_ADDRESS="197.12.12.1";
 }

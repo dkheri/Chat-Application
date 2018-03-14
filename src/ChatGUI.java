@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package assignment1;
+
 
 import java.io.File;
 import javax.swing.JFileChooser;
@@ -47,10 +47,10 @@ public class ChatGUI extends javax.swing.JFrame {
         btnSignup = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList<>();
+        lUsers = new javax.swing.JList<>();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        taMsgs = new javax.swing.JTextArea();
         txtgetM = new javax.swing.JTextField();
         btnSend = new javax.swing.JButton();
         btnBrowse = new javax.swing.JButton();
@@ -149,12 +149,12 @@ public class ChatGUI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jList2.setModel(new javax.swing.AbstractListModel<String>() {
+        lUsers.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "User1", "User2", "User3", "User4", " " };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane2.setViewportView(jList2);
+        jScrollPane2.setViewportView(lUsers);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -167,13 +167,18 @@ public class ChatGUI extends javax.swing.JFrame {
             .addComponent(jScrollPane2)
         );
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        taMsgs.setColumns(20);
+        taMsgs.setRows(5);
+        jScrollPane1.setViewportView(taMsgs);
 
         txtgetM.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
 
         btnSend.setText("send");
+        btnSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSendActionPerformed(evt);
+            }
+        });
 
         btnBrowse.setText("browse");
         btnBrowse.addActionListener(new java.awt.event.ActionListener() {
@@ -282,6 +287,14 @@ public class ChatGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnBrowseActionPerformed
 
+    private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
+        // TODO add your handling code here:
+        Client.createMessage(txtgetM.getText());
+    }//GEN-LAST:event_btnSendActionPerformed
+   
+    void putToTA(String m){
+        taMsgs.append(m);
+    }
     /**
      * @param args the command line arguments
      */
@@ -327,13 +340,13 @@ public class ChatGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JList<String> jList2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JList<String> lUsers;
+    private javax.swing.JTextArea taMsgs;
     private javax.swing.JTextField txtHA;
     private javax.swing.JTextField txtPas;
     private javax.swing.JTextField txtPort;
@@ -341,5 +354,5 @@ public class ChatGUI extends javax.swing.JFrame {
     private javax.swing.JTextField txtgetFILE;
     private javax.swing.JTextField txtgetM;
     // End of variables declaration//GEN-END:variables
-final JFileChooser fc = new JFileChooser();
+    final JFileChooser fc = new JFileChooser();
 }

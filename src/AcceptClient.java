@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package assignment1;
+
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -22,17 +22,17 @@ public class AcceptClient implements Runnable, Cprotocol {
     public ObjectInputStream obin;
     public ObjectOutputStream obout;
 
-    public AcceptClient(Socket clientSocket, ObjectInputStream obin, ObjectOutputStream obout) {
-        this.clientSocket = clientSocket;
-        this.obin = obin;
-        this.obout = obout;
+    public AcceptClient(Socket cs) throws IOException {
+        this.clientSocket = cs;
+        this.obin = new ObjectInputStream(clientSocket.getInputStream());
+        this.obout = new ObjectOutputStream(clientSocket.getOutputStream());
     }
 
     @Override
     public void run() {
         while (true) {
             try {
-                Message msgFromClien=(Message)obin.readObject();
+                Message msgFromClien = (Message) obin.readObject();
                 recMessage(msgFromClien);
             } catch (Exception e) {
                 Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, e);
@@ -47,7 +47,11 @@ public class AcceptClient implements Runnable, Cprotocol {
 
     @Override
     public void recMessage(Message msg) {
+        switch (msg.mType) {
+            case "Login": {
 
+            }
+        }
     }
 
 }
