@@ -22,23 +22,60 @@ public class Client {
         cg.setVisible(true);
     }
 
-    // public void listen() throws Exception {
-    //     String incoming;
-    //     while (!((incoming = in.readLine()).equals("Out"))) {
-    //         System.out.println(incoming);
-    //     }
-    // }
-    // public void run() {
-    //     try {
-    //         listen();
-    //     } catch (Exception e) {
-    //         e.getMessage();
-    //     }
-    // }
-    public static void createMessage(String msg) throws IOException {
-        cg.putToTA(msg);
-        Message Username = new Message(Values.CONNECTIN_PROTOCOL, cg.getUserName());
-        obout.writeObject(Username);
+    
+
+
+    public static receiveMessage(Message msg)
+    {
+
+        Message msg=msg;
+        if(msg.mType.equals(Values.TEXT_PROTOCOL))
+        {
+            String textMessage=msg.message;
+            String sender=msg.sender;
+            String recipent=msg.recipent;
+            UpdateTextArea(textMessage,sender,recipent);
+        }
+
+    }
+
+
+
+    
+    public void run() {
+        try {
+            
+            Message incoming;
+
+            while(true)
+                {   
+                    incoming=(Message)obout.readObject();        
+                    receiveMessage(incoming);
+                }
+                
+        } 
+
+        catch (Exception e) {
+            e.getMessage();
+        }
+
+    }
+
+
+
+
+    public static void UpdateTextArea(String msg,String sender,String recipent) throws IOException {
+        
+        String displayMessage="["+sender+" to "+recipent+"]:"+msg;
+        cg.putToTA(displayMessage);
+        
+
+        //Message Username = new Message(Values.CONNECTIN_PROTOCOL, cg.getUserName());
+        //obout.writeObject(Username);
+        
+
+
+
         //@DK MESSAGE 
         //SERVER WILL CHECK IF USER IS THER OR NOT IF YES PASS ON THE MESSAGE
 //      	String dest,message;
@@ -46,6 +83,9 @@ public class Client {
 //      	message=Scanner.nextLine();
 //      	Message msg=new Message("Text",dest,message);
     }
+
+
+
 
     public void sendMessage() {
 

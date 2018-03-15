@@ -15,4 +15,6 @@ public final class Values {
     public static String CONNECTIN_PROTOCOL="Connecting";
     public static String OBJECTTYPE_List_PROTOCOL="user list";
     public static String SERVER_USER_NAME="Server";
+	public static String FILE_PROTOCOL="File";
+	public static String TEXT_PROTOCOL="Text";
 }
