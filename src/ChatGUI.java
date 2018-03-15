@@ -340,7 +340,7 @@ public class ChatGUI extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        btnConnect.setText(btnConnect.equals("Connect") ? "Disconnect" : "Connect");
+        btnConnect.setText(btnConnect.getText().equals("Connect") ? "Disconnect" : "Connect");
     }//GEN-LAST:event_btnConnectActionPerformed
 
     void putToTA(String m) {

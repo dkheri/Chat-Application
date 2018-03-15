@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -23,6 +24,7 @@ public class AcceptClient extends Thread implements Cprotocol {
     public ObjectInputStream obin;
     public ObjectOutputStream obout;
     private boolean cont;
+
     public AcceptClient(Socket cs) throws IOException {
         this.cont = true;
         this.clientSocket = cs;
@@ -38,13 +40,18 @@ public class AcceptClient extends Thread implements Cprotocol {
 
     @Override
     public void run() {
-        while (cont) {
+        while (obin != null) {
+            Message msgFromClien;
             try {
-                Message msgFromClien = (Message) obin.readObject();
+                msgFromClien = (Message) obin.readObject();
                 recMessage(msgFromClien);
-            } catch (Exception e) {
-                Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, e);
+            } catch (IOException ex) {
+                Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                System.out.println("Client left successfully");
+                return;
             }
+
         }
     }
 
@@ -85,15 +92,16 @@ public class AcceptClient extends Thread implements Cprotocol {
 //                }
                 break;
             }
-            case Values.DISCONNECT_PROTOCOL:{
-            try {
-                obin.close();
-                obout.close();
-                clientSocket.close();
-                this.cont=false;
-            } catch (IOException ex) {
-                Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            case Values.DISCONNECT_PROTOCOL: {
+                try {
+                    obin.close();
+                    obout.close();
+                    clientSocket.close();
+                    this.cont = false;
+                    System.exit(0);
+                } catch (IOException ex) {
+                    Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
         }
