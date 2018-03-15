@@ -297,7 +297,8 @@ public class ChatGUI extends javax.swing.JFrame {
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
         try {
             // TODO add your handling code here:
-            Client.UpdateTextArea(txtgetM.getText());
+            Client.sendMessage();
+            taMsgs.append(txtgetM.getText());
 
         } catch (IOException ex) {
             Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
