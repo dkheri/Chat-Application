@@ -113,7 +113,7 @@ public class ChatGUI extends javax.swing.JFrame {
 
         btnlogin.setText("login");
 
-        btnConnect.setText("connect");
+        btnConnect.setText("Connect");
         btnConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnConnectActionPerformed(evt);
