@@ -298,7 +298,7 @@ public class ChatGUI extends javax.swing.JFrame {
         try {
             // TODO add your handling code here:
             Client.sendMessage();
-            taMsgs.append(txtgetM.getText());
+//            taMsgs.append(txtgetM.getText());
 
         } catch (IOException ex) {
             Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
