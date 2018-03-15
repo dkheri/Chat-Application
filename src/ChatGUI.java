@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,13 +27,31 @@ public class ChatGUI extends javax.swing.JFrame {
 
     /**
      * Creates new form ChatGUI
+     *
      * @throws java.io.IOException
      */
     public ChatGUI() throws IOException {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setResizable(false);
-        this.setDefaultCloseOperation(getConnceted());
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (btnConnect.getText().equals("Disconnect")) {
+                    try {
+                        Client.disconnect();
+                        JOptionPane.showMessageDialog(null, "GoodBye");
+                        e.getWindow().dispose();
+
+                    } catch (IOException ex) {
+                        Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "GoodBye");
+                }
+            }
+        });
+//        this.setDefaultCloseOperation(getConnceted());
     }
 
     /**
@@ -320,7 +340,7 @@ public class ChatGUI extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-        btnConnect.setText("Disconnect");
+        btnConnect.setText(btnConnect.equals("Connect") ? "Disconnect" : "Connect");
     }//GEN-LAST:event_btnConnectActionPerformed
 
     void putToTA(String m) {
@@ -412,8 +432,4 @@ public class ChatGUI extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     final JFileChooser fc = new JFileChooser();
 
-    private int getConnceted() throws IOException {
-        Client.disconnect();///telling clietn to disconnect
-        return JFrame.DISPOSE_ON_CLOSE;
-    }
 }
