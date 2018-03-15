@@ -40,7 +40,8 @@ public class Client implements Runnable{
             String textMessage=msg.message;
             String sender=msg.sender;
             String recipent=msg.recipent;
-            UpdateTextArea(textMessage,sender,recipent);
+            String displayMessage="["+sender+" to "+recipent+"]:"+msg;
+            UpdateTextArea(displayMessage);
         }
 
     }
@@ -77,9 +78,9 @@ public class Client implements Runnable{
 
 
 
-    public static void UpdateTextArea(String msg,String sender,String recipent) throws IOException {
+    public static void UpdateTextArea(String displayMessage) throws IOException {
         
-        String displayMessage="["+sender+" to "+recipent+"]:"+msg;
+        
         cg.putToTA(displayMessage);
         
 
@@ -118,7 +119,7 @@ public class Client implements Runnable{
             // Client.cg.populateListView(r);
             // System.out.println(Arrays.toString(r.toArray()));
 
-            
+
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
