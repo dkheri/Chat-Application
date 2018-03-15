@@ -5,23 +5,30 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Client {
+public class Client implements Runnable{
 
     static ChatGUI cg;
     public static ObjectInputStream obin;
     public static ObjectOutputStream obout;
-    Socket client = null;
+    Socket client;
 
     public Client() throws IOException {
-        client = new Socket(Values.SERVER_IP_ADDRESS, (int) Values.SERVER_PORT_NUMBER);
-        Client.obin = new ObjectInputStream(client.getInputStream());
-        Client.obout = new ObjectOutputStream(client.getOutputStream());
-        Client.obout.flush();
+        
         cg = new ChatGUI();
 
         cg.setVisible(true);
     }
 
+
+    public static void connect()
+    {
+
+        client = new Socket(Values.SERVER_IP_ADDRESS, (int) Values.SERVER_PORT_NUMBER);
+        Client.obin = new ObjectInputStream(client.getInputStream());
+        Client.obout = new ObjectOutputStream(client.getOutputStream());
+        Client.obout.flush();
+
+    }
     
 
 
@@ -40,6 +47,13 @@ public class Client {
     }
 
 
+    public static void login()
+    {
+
+        Message Username = new Message(Values.CONNECTIN_PROTOCOL, cg.getUserName());
+        obout.writeObject(Username);
+
+    }
 
     
     public void run() {
@@ -70,8 +84,7 @@ public class Client {
         cg.putToTA(displayMessage);
         
 
-        //Message Username = new Message(Values.CONNECTIN_PROTOCOL, cg.getUserName());
-        //obout.writeObject(Username);
+        
         
 
 
@@ -95,12 +108,18 @@ public class Client {
     public static void main(String[] args) {
         try {
             Client c = new Client();
-            ArrayList<String> r = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                r.add("Mellar");
-            }
-            Client.cg.populateListView(r);
-            System.out.println(Arrays.toString(r.toArray()));
+            Thread t=new Thread(c);
+            t.start();
+
+
+            // ArrayList<String> r = new ArrayList<>();
+            // for (int i = 0; i < 5; i++) {
+            //     r.add("Mellar");
+            // }
+            // Client.cg.populateListView(r);
+            // System.out.println(Arrays.toString(r.toArray()));
+
+            
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
