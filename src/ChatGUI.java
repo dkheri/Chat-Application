@@ -45,7 +45,7 @@ public class ChatGUI extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         txtUser = new javax.swing.JTextField();
         txtPort = new javax.swing.JTextField();
-        txtHA = new javax.swing.JTextField();
+        txtSA = new javax.swing.JTextField();
         btnlogin = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         btnSignup = new javax.swing.JButton();
@@ -73,17 +73,27 @@ public class ChatGUI extends javax.swing.JFrame {
         jLabel4.setText("Password");
 
         jLabel5.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel5.setText("host address:");
+        jLabel5.setText("Server Address:");
 
         txtUser.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
 
-        txtPort.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        txtPort.setFont(new java.awt.Font("Dialog", 0, 18));
+        txtPort.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPortActionPerformed(evt);
+            }
+        });
 
-        txtHA.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        txtSA.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
 
         btnlogin.setText("login");
 
         jButton2.setText("connect");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         btnSignup.setText("singup");
         btnSignup.addActionListener(new java.awt.event.ActionListener() {
@@ -114,7 +124,7 @@ public class ChatGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(txtHA, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtSA, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnSignup)
                         .addGap(19, 19, 19)
@@ -123,7 +133,7 @@ public class ChatGUI extends javax.swing.JFrame {
                         .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -133,7 +143,7 @@ public class ChatGUI extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jLabel5)
                     .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtHA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnlogin)
                     .addComponent(btnSignup))
                 .addGap(18, 18, 18)
@@ -147,6 +157,8 @@ public class ChatGUI extends javax.swing.JFrame {
                     .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
+
+        txtPort.setText(""+Values.SERVER_PORT_NUMBER);
 
         jScrollPane2.setViewportView(lUsers);
 
@@ -290,6 +302,19 @@ public class ChatGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSendActionPerformed
 
+    private void txtPortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPortActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPortActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        try {
+            // TODO add your handling code here:
+            Client.connect(txtSA.getText());
+        } catch (IOException ex) {
+            Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     void putToTA(String m) {
         taMsgs.append(m);
     }
@@ -358,8 +383,8 @@ public class ChatGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList<String> lUsers;
     private javax.swing.JTextArea taMsgs;
-    private javax.swing.JTextField txtHA;
     private javax.swing.JTextField txtPort;
+    private javax.swing.JTextField txtSA;
     private javax.swing.JTextField txtUser;
     private javax.swing.JTextField txtgetFILE;
     private javax.swing.JTextField txtgetM;
