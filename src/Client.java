@@ -24,7 +24,8 @@ public class Client implements Runnable {
 //            }
 //        }
         obout.writeObject(m);
-        TimeUnit.SECONDS.sleep(5);
+        System.out.println("sent");
+        TimeUnit.SECONDS.sleep(5000);
     }
     
     public Client() throws IOException {

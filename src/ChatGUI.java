@@ -39,6 +39,7 @@ public class ChatGUI extends javax.swing.JFrame {
             public void windowClosing(WindowEvent e) {
                 if (btnConnect.getText().equals("Disconnect")) {
                     try {
+                        JOptionPane.showMessageDialog(null, "Please wait a few seconds while we close connections to server");
                         Client.disconnect();
                         JOptionPane.showMessageDialog(null, "GoodBye");
                         e.getWindow().dispose();

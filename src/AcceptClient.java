@@ -40,7 +40,7 @@ public class AcceptClient extends Thread implements Cprotocol {
 
     @Override
     public void run() {
-        while (obin != null) {
+        while (this.cont) {
             Message msgFromClien;
             try {
                 msgFromClien = (Message) obin.readObject();
@@ -68,6 +68,7 @@ public class AcceptClient extends Thread implements Cprotocol {
 
     @Override
     public void recMessage(Message msg) {
+        System.out.println("Received");
         switch (msg.mType) {
             case Values.CONNECTIN_PROTOCOL: {
                 System.out.println();
@@ -98,7 +99,6 @@ public class AcceptClient extends Thread implements Cprotocol {
                     obout.close();
                     clientSocket.close();
                     this.cont = false;
-                    System.exit(0);
                 } catch (IOException ex) {
                     Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
