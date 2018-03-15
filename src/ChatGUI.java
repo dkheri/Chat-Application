@@ -45,6 +45,8 @@ public class ChatGUI extends javax.swing.JFrame {
 
                     } catch (IOException ex) {
                         Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "GoodBye");
