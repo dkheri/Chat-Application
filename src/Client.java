@@ -19,8 +19,12 @@ public class Client implements Runnable {
         String mesString = "";
         Message m = new Message(tyString, mesString);
         obout.writeObject(m);
+
+	
         System.out.println("sent");
-        TimeUnit.SECONDS.sleep(5000);
+	obin.close();
+	obout.close();
+
     }
     
     public Client() throws IOException {
@@ -60,6 +64,14 @@ public class Client implements Runnable {
             UpdateTextArea(displayMessage);
         }
         
+         if (msg.mType.equals(Values.OBJECTTYPE_LIST_PROTOCOL)) {
+
+            ArrayList<String> x=(ArrayList<String>)msg.obMessage;
+            cg.populateListView(x);
+        }
+        
+
+
     }
     
     public static void login() throws IOException {
