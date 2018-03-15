@@ -48,6 +48,12 @@ public class AcceptClient extends Thread implements Cprotocol {
 
     @Override
     public void sendMessage(Message msg) {
+        try {
+            obout.writeObject(msg);
+            obout.flush();
+        } catch (IOException ex) {
+            Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
 
@@ -60,7 +66,8 @@ public class AcceptClient extends Thread implements Cprotocol {
                 CServer.addClient(userTemp, clientSocket);
                 sendMessage(new Message("Connected", userTemp));
                 System.out.println(msg.message);
-                
+                Message a= new Message(Values.OBJECTTYPE_List_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.getList());
+                sendMessage(a);
             }
         }
     }

@@ -10,16 +10,15 @@ public class Client {
     static ChatGUI cg;
     public static ObjectInputStream obin;
     public static ObjectOutputStream obout;
-    Socket client=null;
+    Socket client = null;
 
     public Client() throws IOException {
-        System.out.println("hERE");
-        client= new Socket(Values.SERVER_IP_ADDRESS, (int) Values.SERVER_PORT_NUMBER);
+        client = new Socket(Values.SERVER_IP_ADDRESS, (int) Values.SERVER_PORT_NUMBER);
         Client.obin = new ObjectInputStream(client.getInputStream());
         Client.obout = new ObjectOutputStream(client.getOutputStream());
         Client.obout.flush();
-        System.out.println("In here");
         cg = new ChatGUI();
+
         cg.setVisible(true);
     }
 
@@ -53,9 +52,15 @@ public class Client {
         // out and send msg object to server if user is there it will pass it on if not it will discard it and prompt user to retry
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         try {
-            Client c= new Client();
+            Client c = new Client();
+            ArrayList<String> r = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                r.add("Mellar");
+            }
+            Client.cg.populateListView(r);
+            System.out.println(Arrays.toString(r.toArray()));
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }

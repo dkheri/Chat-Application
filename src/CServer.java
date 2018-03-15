@@ -38,21 +38,32 @@ public class CServer {
         }
     }
 
-    public static void addClient(String userTemp, Socket clientSocket) {
-
+    public synchronized static void addClient(String userTemp, Socket clientSocket) {
+        loginNames.add(userTemp);
+        clientSockets.add(clientSocket);
     }
 
-    public static void removeClient() {
-
+    public static void removeClient(String userTemp, Socket clientSocket) {
+        int i;
+        for (String s : loginNames) {
+            if (s.equals(userTemp)) {
+                i = loginNames.indexOf(s);
+                loginNames.remove(s);
+                clientSockets.remove(i);
+            }
+        }
     }
 
+    public static Object getList(){
+        return loginNames;
+    }
     public static void main(String[] args) {
         try {
             CServer cs = new CServer();
         } catch (IOException ex) {
             Logger.getLogger(CServer.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
+    
 
 }

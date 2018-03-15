@@ -13,5 +13,6 @@ public final class Values {
     public final static long SERVER_PORT_NUMBER=6666;
     public static String SERVER_IP_ADDRESS="localhost";
     public static String CONNECTIN_PROTOCOL="Connecting";
-//    public static String TXT
+    public static String OBJECTTYPE_List_PROTOCOL="user list";
+    public static String SERVER_USER_NAME="Server";
 }
