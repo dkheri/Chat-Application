@@ -57,7 +57,11 @@ public class CServer {
         }
     }
 
-    public static Object getList() {
+    static Socket getClient(int sckNumber) {
+        return clientSockets.get(sckNumber);
+     }
+    
+    public static Object getUserList() {
         return loginNames;
     }
 

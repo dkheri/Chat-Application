@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,6 +56,11 @@ public class AcceptClient extends Thread implements Cprotocol {
         }
     }
 
+    private void sendMessge(Message msg, Socket clientTO) throws IOException {
+        ObjectOutputStream tempStream = new ObjectOutputStream(clientTO.getOutputStream());
+        tempStream.writeObject(msg);
+    }
+
     @Override
     public void sendMessage(Message msg) {
         try {
@@ -63,7 +69,7 @@ public class AcceptClient extends Thread implements Cprotocol {
         } catch (IOException ex) {
             Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        System.out.println("Done man");
     }
 
     @Override
@@ -76,7 +82,11 @@ public class AcceptClient extends Thread implements Cprotocol {
                 CServer.addClient(userTemp, clientSocket);
                 sendMessage(new Message("Connected", userTemp));
                 System.out.println(msg.message);
-                Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.getList());
+                ArrayList<String> r = new ArrayList<>();
+                for (int i = 0; i < 5; i++) {
+                    r.add("Mellar");
+                }
+                Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.getUserList());
                 sendMessage(a);
                 break;
             }
@@ -84,13 +94,16 @@ public class AcceptClient extends Thread implements Cprotocol {
                 System.out.println(msg.message);
                 String rec = msg.recipent;
                 int sckNumber;
-//                for(String s:(ArrayList<String>) CServer.getList()){
-//                    if(s.equals(rec)){
-//                        sckNumber=((ArrayList<String>) CServer.getList()).indexOf(s);
-                Message m = new Message(Values.TEXT_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, msg.message);
-                sendMessage(m);
-//                    }
-//                }
+                for (String s : (ArrayList<String>) CServer.getUserList()) {
+                    if (s.equals(rec)) {
+                        sckNumber = ((ArrayList<String>) CServer.getUserList()).indexOf(s);
+                        try {
+                            sendMessge(msg, CServer.getClient(sckNumber));
+                        } catch (IOException ex) {
+                            Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
                 break;
             }
             case Values.DISCONNECT_PROTOCOL: {

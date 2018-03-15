@@ -18,11 +18,6 @@ public class Client implements Runnable {
         String tyString = Values.DISCONNECT_PROTOCOL;
         String mesString = "";
         Message m = new Message(tyString, mesString);
-//        for(int i=0;i<50000;i++ ){
-//            for(int j=0;j<50000;j++){
-//                int b=i+j;
-//            }
-//        }
         obout.writeObject(m);
         System.out.println("sent");
         TimeUnit.SECONDS.sleep(5000);
