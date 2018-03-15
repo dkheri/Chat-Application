@@ -12,7 +12,9 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 
 /**
@@ -28,6 +30,7 @@ public class ChatGUI extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(this);
         this.setResizable(false);
+        this.setDefaultCloseOperation(getConnceted());
     }
 
     /**
@@ -48,7 +51,7 @@ public class ChatGUI extends javax.swing.JFrame {
         txtPort = new javax.swing.JTextField();
         txtSA = new javax.swing.JTextField();
         btnlogin = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnConnect = new javax.swing.JButton();
         btnSignup = new javax.swing.JButton();
         jPasswordField1 = new javax.swing.JPasswordField();
         jPanel3 = new javax.swing.JPanel();
@@ -89,10 +92,10 @@ public class ChatGUI extends javax.swing.JFrame {
 
         btnlogin.setText("login");
 
-        jButton2.setText("connect");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnConnect.setText("connect");
+        btnConnect.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnConnectActionPerformed(evt);
             }
         });
 
@@ -133,7 +136,7 @@ public class ChatGUI extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnConnect, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -151,7 +154,7 @@ public class ChatGUI extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton2))
+                        .addComponent(btnConnect))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel3)
                         .addComponent(jLabel4))
@@ -309,14 +312,15 @@ public class ChatGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPortActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         try {
             // TODO add your handling code here:
             Client.connect(txtSA.getText());
         } catch (IOException ex) {
             Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+        btnConnect.setText("Disconnect");
+    }//GEN-LAST:event_btnConnectActionPerformed
 
     void putToTA(String m) {
         taMsgs.append(m);
@@ -332,9 +336,7 @@ public class ChatGUI extends javax.swing.JFrame {
         return listUsers.getSelectedValue();
     }
 
-
-    public String getSendTextArea()
-    {
+    public String getSendTextArea() {
         return txtgetM.getText();
     }
 
@@ -381,10 +383,10 @@ public class ChatGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowse;
+    private javax.swing.JButton btnConnect;
     private javax.swing.JButton btnSend;
     private javax.swing.JButton btnSignup;
     private javax.swing.JButton btnlogin;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -404,4 +406,9 @@ public class ChatGUI extends javax.swing.JFrame {
     private javax.swing.JTextField txtgetM;
     // End of variables declaration//GEN-END:variables
     final JFileChooser fc = new JFileChooser();
+
+    private int getConnceted() throws IOException {
+        Client.disconnect();///telling clietn to disconnect
+        return JFrame.DISPOSE_ON_CLOSE;
+    }
 }

@@ -7,6 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,9 +24,12 @@ public class CServer {
     private final ServerSocket server;
     private static ArrayList<Socket> clientSockets;
     private static ArrayList<String> loginNames;
+//    private final InetAddress localhost;
 
     public CServer() throws IOException {
+
         server = new ServerSocket((int) Values.SERVER_PORT_NUMBER);
+
         clientSockets = new ArrayList<>();
         loginNames = new ArrayList<>();
         System.out.print(server.getLocalSocketAddress());
@@ -54,9 +60,10 @@ public class CServer {
         }
     }
 
-    public static Object getList(){
+    public static Object getList() {
         return loginNames;
     }
+
     public static void main(String[] args) {
         try {
             CServer cs = new CServer();
@@ -64,6 +71,5 @@ public class CServer {
             Logger.getLogger(CServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
 
 }

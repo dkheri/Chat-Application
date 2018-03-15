@@ -12,6 +12,13 @@ public class Client implements Runnable {
     public static ObjectOutputStream obout;
     static Socket client;
     static Client c;
+
+    static void disconnect() throws IOException {
+        String tyString=Values.DISCONNECT_PROTOCOL;
+        String mesString="";
+        Message m= new Message(mesString, mesString);
+        obout.writeObject(m);
+    }
     public Client() throws IOException {
 
         cg = new ChatGUI();

@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -23,22 +22,23 @@ public class AcceptClient extends Thread implements Cprotocol {
     public Socket clientSocket;
     public ObjectInputStream obin;
     public ObjectOutputStream obout;
-
+    private boolean cont;
     public AcceptClient(Socket cs) throws IOException {
+        this.cont = true;
         this.clientSocket = cs;
+        this.clientSocket.setKeepAlive(true);
         this.obout = new ObjectOutputStream(cs.getOutputStream());
         obout.flush();
         this.obin = new ObjectInputStream(cs.getInputStream());
         System.out.println("here");
-        
-        
+
         start();
-        
+
     }
 
     @Override
     public void run() {
-        while (true) {
+        while (cont) {
             try {
                 Message msgFromClien = (Message) obin.readObject();
                 recMessage(msgFromClien);
@@ -56,7 +56,7 @@ public class AcceptClient extends Thread implements Cprotocol {
         } catch (IOException ex) {
             Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     @Override
@@ -64,24 +64,38 @@ public class AcceptClient extends Thread implements Cprotocol {
         switch (msg.mType) {
             case Values.CONNECTIN_PROTOCOL: {
                 System.out.println();
-                String userTemp=msg.message;
+                String userTemp = msg.message;
                 CServer.addClient(userTemp, clientSocket);
                 sendMessage(new Message("Connected", userTemp));
                 System.out.println(msg.message);
-                Message a= new Message(Values.OBJECTTYPE_List_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.getList());
+                Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.getList());
                 sendMessage(a);
                 break;
             }
-            case Values.TEXT_PROTOCOL:{
-                String rec=msg.recipent;
+            case Values.TEXT_PROTOCOL: {
+                System.out.println(msg.message);
+                String rec = msg.recipent;
                 int sckNumber;
-                for(String s:(ArrayList<String>) CServer.getList()){
-                    if(s.equals(rec)){
-                        sckNumber=((ArrayList<String>) CServer.getList()).indexOf(s);
-                        
-                    }
-                }
+//                for(String s:(ArrayList<String>) CServer.getList()){
+//                    if(s.equals(rec)){
+//                        sckNumber=((ArrayList<String>) CServer.getList()).indexOf(s);
+                Message m = new Message(Values.TEXT_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, msg.message);
+                sendMessage(m);
+//                    }
+//                }
+                break;
             }
+            case Values.DISCONNECT_PROTOCOL:{
+            try {
+                obin.close();
+                obout.close();
+                clientSocket.close();
+                this.cont=false;
+            } catch (IOException ex) {
+                Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            }
+
         }
     }
 
