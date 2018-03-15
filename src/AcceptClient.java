@@ -4,14 +4,11 @@
  * and open the template in the editor.
  */
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,7 +30,6 @@ public class AcceptClient extends Thread implements Cprotocol {
         this.obout = new ObjectOutputStream(cs.getOutputStream());
         obout.flush();
         this.obin = new ObjectInputStream(cs.getInputStream());
-        System.out.println("here");
 
         start();
 
@@ -57,10 +53,14 @@ public class AcceptClient extends Thread implements Cprotocol {
     }
 
     private void sendMessge(Message msg, Socket clientTO) throws IOException {
-        ObjectOutputStream tempStream = new ObjectOutputStream(clientTO.getOutputStream());
-        tempStream.writeObject(msg);
+        for(int i=0;i<((ArrayList<String>)CServer.getUserList()).size();i++){
+            ObjectOutputStream tempStream = new ObjectOutputStream(clientTO.getOutputStream());
+            tempStream.flush();
+            tempStream.writeObject(msg);
+            tempStream.flush();
+            System.out.println(clientTO.getRemoteSocketAddress());
     }
-
+    }
     @Override
     public void sendMessage(Message msg) {
         try {
@@ -69,19 +69,16 @@ public class AcceptClient extends Thread implements Cprotocol {
         } catch (IOException ex) {
             Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("Done man");
     }
 
     @Override
     public void recMessage(Message msg) {
-        System.out.println("Received");
+        System.out.println(msg);
         switch (msg.mType) {
             case Values.CONNECTIN_PROTOCOL: {
                 System.out.println();
                 String userTemp = msg.message;
                 CServer.addClient(userTemp, clientSocket);
-                sendMessage(new Message("Connected", userTemp));
-                System.out.println(msg.message);
                 ArrayList<String> r = new ArrayList<>();
                 for (int i = 0; i < 5; i++) {
                     r.add("Mellar");
