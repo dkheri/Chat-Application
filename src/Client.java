@@ -29,6 +29,21 @@ public class Client implements Runnable {
         t.start();
     }
 
+
+
+    public static void sendMessage () throws IOException 
+    {
+
+        String messageTxt=cg.getSendTextArea();
+        String recipent=cg.getSelectedUser();
+        String sender=cg.getUserName();
+        Message SentMsg=new Message(Values.TEXT_PROTOCOL,recipent,sender,messageTxt);
+        obout.writeObject(SentMsg);
+
+    }
+
+
+
     public static void receiveMessage(Message msg) throws IOException {
 
         if (msg.mType.equals(Values.TEXT_PROTOCOL)) {
@@ -70,16 +85,18 @@ public class Client implements Runnable {
 
         //@DK MESSAGE 
         //SERVER WILL CHECK IF USER IS THER OR NOT IF YES PASS ON THE MESSAGE
-//      	String dest,message;
-//      	dest=Scanner.nextLine();
-//      	message=Scanner.nextLine();
-//      	Message msg=new Message("Text",dest,message);
+//          String dest,message;
+//          dest=Scanner.nextLine();
+//          message=Scanner.nextLine();
+//          Message msg=new Message("Text",dest,message);
     }
 
-    public void sendMessage() {
 
-        // out and send msg object to server if user is there it will pass it on if not it will discard it and prompt user to retry
-    }
+
+
+
+
+    
 
     public static void main(String[] args) {
         try {

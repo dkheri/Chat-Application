@@ -331,6 +331,12 @@ public class ChatGUI extends javax.swing.JFrame {
         return listUsers.getSelectedValue();
     }
 
+
+    public String getSendTextArea()
+    {
+        return txtgetM.getText();
+    }
+
     void populateListView(ArrayList<String> l) {
         Vector<String> v = new Vector(l);
         listUsers.setListData(v);
