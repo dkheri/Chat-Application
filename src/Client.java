@@ -69,6 +69,14 @@ public class Client implements Runnable {
             UpdateTextArea(displayMessage);
         }
         
+         if (msg.mType.equals(Values.OBJECTTYPE_LIST_PROTOCOL)) {
+
+            ArrayList<String> x=(ArrayList<String>)msg.obMessage;
+            cg.populateListView(x);
+        }
+        
+
+
     }
     
     public static void login() throws IOException {
