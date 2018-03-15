@@ -25,10 +25,11 @@ public class ChatGUI extends javax.swing.JFrame {
 
     /**
      * Creates new form ChatGUI
+     * @throws java.io.IOException
      */
-    public ChatGUI() {
+    public ChatGUI() throws IOException {
         initComponents();
-        this.setLocationRelativeTo(this);
+        this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setDefaultCloseOperation(getConnceted());
     }
@@ -376,7 +377,11 @@ public class ChatGUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ChatGUI().setVisible(true);
+                try {
+                    new ChatGUI().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
