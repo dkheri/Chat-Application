@@ -16,7 +16,7 @@ public class Client implements Runnable {
     static void disconnect() throws IOException {
         String tyString=Values.DISCONNECT_PROTOCOL;
         String mesString="";
-        Message m= new Message(mesString, mesString);
+        Message m= new Message(tyString, mesString);
         obout.writeObject(m);
     }
     public Client() throws IOException {
