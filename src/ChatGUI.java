@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Vector;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
+
 /**
  *
  * @author Meluleki
@@ -52,7 +53,7 @@ public class ChatGUI extends javax.swing.JFrame {
         jPasswordField1 = new javax.swing.JPasswordField();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        lUsers = new javax.swing.JList<>();
+        listUsers = new javax.swing.JList<>();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         taMsgs = new javax.swing.JTextArea();
@@ -160,7 +161,7 @@ public class ChatGUI extends javax.swing.JFrame {
 
         txtPort.setText(""+Values.SERVER_PORT_NUMBER);
 
-        jScrollPane2.setViewportView(lUsers);
+        jScrollPane2.setViewportView(listUsers);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -297,6 +298,7 @@ public class ChatGUI extends javax.swing.JFrame {
         try {
             // TODO add your handling code here:
             Client.UpdateTextArea(txtgetM.getText());
+
         } catch (IOException ex) {
             Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -324,12 +326,17 @@ public class ChatGUI extends javax.swing.JFrame {
         return txtUser.getText();
 
     }
-    
-    void populateListView(ArrayList<String> l){
-        Vector<String> v= new Vector(l);
-        lUsers.setListData(v);
-        lUsers.setVisible(true);
+
+    String getSelectedUser() {
+        return listUsers.getSelectedValue();
     }
+
+    void populateListView(ArrayList<String> l) {
+        Vector<String> v = new Vector(l);
+        listUsers.setListData(v);
+        listUsers.setVisible(true);
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -381,7 +388,7 @@ public class ChatGUI extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JList<String> lUsers;
+    private javax.swing.JList<String> listUsers;
     private javax.swing.JTextArea taMsgs;
     private javax.swing.JTextField txtPort;
     private javax.swing.JTextField txtSA;
