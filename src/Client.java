@@ -10,7 +10,7 @@ public class Client implements Runnable{
     static ChatGUI cg;
     public static ObjectInputStream obin;
     public static ObjectOutputStream obout;
-    Socket client;
+    static Socket client;
 
     public Client() throws IOException {
         
@@ -20,7 +20,7 @@ public class Client implements Runnable{
     }
 
 
-    public static void connect()
+    public static void connect() throws IOException
     {
 
         client = new Socket(Values.SERVER_IP_ADDRESS, (int) Values.SERVER_PORT_NUMBER);
@@ -32,10 +32,9 @@ public class Client implements Runnable{
     
 
 
-    public static receiveMessage(Message msg)
+    public static void receiveMessage(Message msg) throws IOException
     {
-
-        Message msg=msg;
+        
         if(msg.mType.equals(Values.TEXT_PROTOCOL))
         {
             String textMessage=msg.message;
@@ -47,7 +46,7 @@ public class Client implements Runnable{
     }
 
 
-    public static void login()
+    public static void login() throws IOException
     {
 
         Message Username = new Message(Values.CONNECTIN_PROTOCOL, cg.getUserName());
@@ -63,13 +62,13 @@ public class Client implements Runnable{
 
             while(true)
                 {   
-                    incoming=(Message)obout.readObject();        
+                    incoming=(Message)obin.readObject();        
                     receiveMessage(incoming);
                 }
                 
         } 
 
-        catch (Exception e) {
+        catch (IOException | ClassNotFoundException e) {
             e.getMessage();
         }
 

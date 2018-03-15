@@ -43,7 +43,7 @@ public class CServer {
         clientSockets.add(clientSocket);
     }
 
-    public static void removeClient(String userTemp, Socket clientSocket) {
+    public synchronized static void removeClient(String userTemp, Socket clientSocket) {
         int i;
         for (String s : loginNames) {
             if (s.equals(userTemp)) {

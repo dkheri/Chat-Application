@@ -4,17 +4,17 @@
  * and open the template in the editor.
  */
 
-
 /**
  *
  * @author Meluleki
  */
 public final class Values {
-    public final static long SERVER_PORT_NUMBER=6666;
-    public static String SERVER_IP_ADDRESS="localhost";
-    public static String CONNECTIN_PROTOCOL="Connecting";
-    public static String OBJECTTYPE_List_PROTOCOL="user list";
-    public static String SERVER_USER_NAME="Server";
-	public static String FILE_PROTOCOL="File";
-	public static String TEXT_PROTOCOL="Text";
+
+    public final static long SERVER_PORT_NUMBER = 6666;
+    public final static String SERVER_IP_ADDRESS = "localhost";
+    public final static String CONNECTIN_PROTOCOL = "Connecting";
+    public final static String OBJECTTYPE_List_PROTOCOL = "user list";
+    public final static String SERVER_USER_NAME = "Server";
+    public final static String FILE_PROTOCOL = "File";
+    public final static String TEXT_PROTOCOL = "Text";
 }

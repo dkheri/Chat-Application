@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,7 +62,7 @@ public class AcceptClient extends Thread implements Cprotocol {
     @Override
     public void recMessage(Message msg) {
         switch (msg.mType) {
-            case "Connecting": {
+            case Values.CONNECTIN_PROTOCOL: {
                 System.out.println();
                 String userTemp=msg.message;
                 CServer.addClient(userTemp, clientSocket);
@@ -68,6 +70,17 @@ public class AcceptClient extends Thread implements Cprotocol {
                 System.out.println(msg.message);
                 Message a= new Message(Values.OBJECTTYPE_List_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.getList());
                 sendMessage(a);
+                break;
+            }
+            case Values.TEXT_PROTOCOL:{
+                String rec=msg.recipent;
+                int sckNumber;
+                for(String s:(ArrayList<String>) CServer.getList()){
+                    if(s.equals(rec)){
+                        sckNumber=((ArrayList<String>) CServer.getList()).indexOf(s);
+                        
+                    }
+                }
             }
         }
     }
