@@ -2,6 +2,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,17 +18,9 @@ public class Client implements Runnable {
         String tyString = Values.DISCONNECT_PROTOCOL;
         String mesString = "";
         Message m = new Message(tyString, mesString);
-//        for(int i=0;i<50000;i++ ){
-//            for(int j=0;j<50000;j++){
-//                int b=i+j;
-//            }
-//        }
         obout.writeObject(m);
-
-    
-        System.out.println("sent");
-    obin.close();
-    obout.close();
+        obin.close();
+        obout.close();
 
     }
     
@@ -63,23 +56,31 @@ public class Client implements Runnable {
     
     public static void receiveMessage(Message msg) throws IOException {
         
-            System.out.println("Received message was called()");
-
         if (msg.mType.equals(Values.TEXT_PROTOCOL)) {
+
             String textMessage = msg.message;
             String sender = msg.sender;
             String recipent = msg.recipent;
-            String displayMessage = "[" + sender + " to " + recipent + "]:" + textMessage;
+            String SRInfo ="[" + sender + " to " + recipent + "]:";
+            String displayMessage=SRInfo+textMessage+"\n";
             UpdateTextArea(displayMessage);
         }
+
+
         
          if (msg.mType.equals(Values.OBJECTTYPE_LIST_PROTOCOL)) 
          {
 
-            ArrayList<String> x=(ArrayList<String>)msg.obMessage;
+            // ArrayList<String> x=(ArrayList<String>)msg.obMessage;
+            ArrayList<String> x=new ArrayList<String>();    
             x.add("all");
-            System.out.println("Received Array obj");
+            for(String user:(ArrayList<String>)msg.obMessage)
+            {
+                    x.add(user);
+
+            }    
             cg.populateListView(x);
+
          }
         
 
@@ -100,12 +101,14 @@ public class Client implements Runnable {
             
             Message incoming;
             
-            while (true) {
-                System.out.println("I get the msg object");
+            while (true) 
+            {
                 incoming = (Message) obin.readObject();
-                System.out.println("readUnshared called");
                 receiveMessage(incoming);
             }
+
+
+
             
         } catch (IOException | ClassNotFoundException e) {
             e.getMessage();
@@ -128,7 +131,7 @@ public class Client implements Runnable {
     public static void main(String[] args) {
         try {
             c = new Client();
-
+        
             // ArrayList<String> r = new ArrayList<>();
             // for (int i = 0; i < 5; i++) {
             //     r.add("Mellar");
