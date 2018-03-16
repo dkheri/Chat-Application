@@ -41,14 +41,13 @@ public class Client implements Runnable {
     public static void connect(String serverAdress) throws IOException {
         
         client = new Socket(serverAdress, (int) Values.SERVER_PORT_NUMBER);
-        Client.obin = new ObjectInputStream(client.getInputStream());
         Client.obout = new ObjectOutputStream(client.getOutputStream());
         Client.obout.flush();
+        Client.obin = new ObjectInputStream(client.getInputStream());
         Thread t = new Thread(c);
         t.start();
         Message Username = new Message(Values.CONNECTIN_PROTOCOL, cg.getUserName());
         obout.writeObject(Username);
-        System.out.println();
     }
     
     public static void sendMessage() throws IOException {
@@ -62,10 +61,8 @@ public class Client implements Runnable {
     }
     
     public static void receiveMessage(Message msg) throws IOException {
-        
-            System.out.println("Received message was called()");
-
         if (msg.mType.equals(Values.TEXT_PROTOCOL)) {
+            System.out.println("Received message was called()");
             String textMessage = msg.message;
             String sender = msg.sender;
             String recipent = msg.recipent;
@@ -78,7 +75,6 @@ public class Client implements Runnable {
 
             ArrayList<String> x=(ArrayList<String>)msg.obMessage;
             x.add("all");
-            System.out.println("Received Array obj");
             cg.populateListView(x);
          }
         
@@ -101,9 +97,7 @@ public class Client implements Runnable {
             Message incoming;
             
             while (true) {
-                System.out.println("I get the msg object");
                 incoming = (Message) obin.readObject();
-                System.out.println("readUnshared called");
                 receiveMessage(incoming);
             }
             

@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  *
  * @author Meluleki
  */
-public class AcceptClient extends Thread implements Cprotocol {
+public class AcceptClient extends Thread{
     
     public Socket clientSocket;
     public ObjectInputStream obin;
@@ -62,20 +62,15 @@ public class AcceptClient extends Thread implements Cprotocol {
             Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    @Override
-    public void sendMessage(Message msg) {
+    public void updateLists(Message msg) {
         try {
-            obout.writeObject(msg);
-            obout.flush();
-
+           for(ObjectOutputStream ous:CServer.outputstreams) ous.writeObject(msg);
         } catch (IOException ex) {
             Logger.getLogger(AcceptClient.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    @Override
     public void recMessage(Message msg) {
         System.out.println(msg);
         switch (msg.mType) {
@@ -83,17 +78,17 @@ public class AcceptClient extends Thread implements Cprotocol {
                 System.out.println();
                 String userTemp = msg.message;
                 System.out.println(obout);
-                CServer.addClient(userTemp, clientSocket, obout);
-                Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.getUserList());
-                sendMessage(a);
+                CServer.addClient(userTemp, obout);
+                Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.loginNames);
+                updateLists(a);
                 break;
             }
             case Values.TEXT_PROTOCOL: {
                 String rec = msg.recipent;
                 int sckNumber;
-                for (String s : (ArrayList<String>) CServer.getUserList()) {
+                for (String s : (ArrayList<String>) CServer.loginNames) {
                     if (s.equals(rec)) {
-                        sckNumber = ((ArrayList<String>) CServer.getUserList()).indexOf(s);
+                        sckNumber = ((ArrayList<String>) CServer.loginNames).indexOf(s);
                         sendMessage(msg, sckNumber);
                         break;
                     }
@@ -105,7 +100,7 @@ public class AcceptClient extends Thread implements Cprotocol {
                     obin.close();
                     obout.close();
                     clientSocket.close();
-                    CServer.removeClient(msg.sender, clientSocket);
+                    CServer.removeClient(msg.sender);
                     this.cont = false;
 
                 } catch (IOException ex) {

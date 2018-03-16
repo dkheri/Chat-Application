@@ -20,7 +20,6 @@ public class CServer {
     private static long Port;
 
     private final ServerSocket server;
-    public static ArrayList<Socket> clientSockets;
     public static ArrayList<String> loginNames;
     public static ArrayList<ObjectOutputStream> outputstreams;
 //    private final InetAddress localhost;
@@ -28,8 +27,6 @@ public class CServer {
     public CServer() throws IOException {
 
         server = new ServerSocket((int) Values.SERVER_PORT_NUMBER);
-
-        clientSockets = new ArrayList<>();
         loginNames = new ArrayList<>();
         outputstreams= new ArrayList<>();
         System.out.print(server.getLocalSocketAddress());
@@ -44,31 +41,21 @@ public class CServer {
         }
     }
 
-    public synchronized static void addClient(String userTemp, Socket clientSocket,ObjectOutputStream obout) {
+    public synchronized static void addClient(String userTemp, ObjectOutputStream obout) {
         loginNames.add(userTemp);
-        clientSockets.add(clientSocket);
         outputstreams.add(obout);
     }
 
-    public synchronized static void removeClient(String userTemp, Socket clientSocket) {
+    public synchronized static void removeClient(String userTemp) {
         int i;
         for (String s : loginNames) {
             if (s.equals(userTemp)) {
                 i = loginNames.indexOf(s);
                 loginNames.remove(s);
-                clientSockets.remove(i);
+                outputstreams.remove(i);
             }
         }
     }
-
-    static Socket getClient(int sckNumber) {
-        return clientSockets.get(sckNumber);
-     }
-    
-    public static ArrayList<String> getUserList() {
-        return loginNames;
-    }
-
     public static void main(String[] args) {
         try {
             CServer cs = new CServer();
