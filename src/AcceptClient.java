@@ -48,7 +48,6 @@ public class AcceptClient extends Thread{
             } catch (IOException ex) {
                 Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
-                System.out.println("Client left successfully");
                 return;
             }
 
@@ -60,8 +59,6 @@ public class AcceptClient extends Thread{
             CServer.outputstreams.get(ortIndex).reset();
             CServer.outputstreams.get(ortIndex).writeUnshared(msg);
             CServer.outputstreams.get(ortIndex).flush();
-            
-            for(String s:(ArrayList<String>)msg.obMessage) System.out.println(s);
         } catch (IOException ex) {
             Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -74,10 +71,8 @@ public class AcceptClient extends Thread{
     }
 
     public void recMessage(Message msg) {
-        System.out.println(msg);
         switch (msg.mType) {
             case Values.CONNECTIN_PROTOCOL: {
-                System.out.println();
                 String userTemp = msg.message;
                 CServer.addClient(userTemp, obout);
                 Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.loginNames);
