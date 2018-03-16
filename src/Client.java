@@ -57,7 +57,7 @@ public class Client implements Runnable {
     public static void receiveMessage(Message msg) throws IOException {
         
         if (msg.mType.equals(Values.TEXT_PROTOCOL)) {
-
+            //Works
             String textMessage = msg.message;
             String sender = msg.sender;
             String recipent = msg.recipent;
