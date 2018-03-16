@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -17,7 +20,7 @@ import java.util.logging.Logger;
  * @author Meluleki
  */
 public class AcceptClient extends Thread implements Cprotocol {
-
+    
     public Socket clientSocket;
     public ObjectInputStream obin;
     public ObjectOutputStream obout;
@@ -52,22 +55,23 @@ public class AcceptClient extends Thread implements Cprotocol {
         }
     }
 
-    private void sendMessge(Message msg, Socket clientTO) throws IOException {
-        for(int i=0;i<((ArrayList<String>)CServer.getUserList()).size();i++){
-            ObjectOutputStream tempStream = new ObjectOutputStream(clientTO.getOutputStream());
-            tempStream.flush();
-            tempStream.writeObject(msg);
-            tempStream.flush();
-            System.out.println(clientTO.getRemoteSocketAddress());
+    private void sendMessage(Message msg, int ortIndex) {
+        try {
+            CServer.outputstreams.get(ortIndex).writeObject(msg);
+        } catch (IOException ex) {
+            Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    }
+
     @Override
     public void sendMessage(Message msg) {
         try {
             obout.writeObject(msg);
             obout.flush();
+
         } catch (IOException ex) {
-            Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AcceptClient.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -78,27 +82,20 @@ public class AcceptClient extends Thread implements Cprotocol {
             case Values.CONNECTIN_PROTOCOL: {
                 System.out.println();
                 String userTemp = msg.message;
-                CServer.addClient(userTemp, clientSocket);
-                ArrayList<String> r = new ArrayList<>();
-                for (int i = 0; i < 5; i++) {
-                    r.add("Mellar");
-                }
+                System.out.println(obout);
+                CServer.addClient(userTemp, clientSocket, obout);
                 Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.getUserList());
                 sendMessage(a);
                 break;
             }
             case Values.TEXT_PROTOCOL: {
-                System.out.println(msg.message);
                 String rec = msg.recipent;
                 int sckNumber;
                 for (String s : (ArrayList<String>) CServer.getUserList()) {
                     if (s.equals(rec)) {
                         sckNumber = ((ArrayList<String>) CServer.getUserList()).indexOf(s);
-                        try {
-                            sendMessge(msg, CServer.getClient(sckNumber));
-                        } catch (IOException ex) {
-                            Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                        sendMessage(msg, sckNumber);
+                        break;
                     }
                 }
                 break;
@@ -108,10 +105,14 @@ public class AcceptClient extends Thread implements Cprotocol {
                     obin.close();
                     obout.close();
                     clientSocket.close();
+                    CServer.removeClient(msg.sender, clientSocket);
                     this.cont = false;
+
                 } catch (IOException ex) {
-                    Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(AcceptClient.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
+                break;
             }
 
         }

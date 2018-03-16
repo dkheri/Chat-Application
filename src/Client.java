@@ -17,12 +17,17 @@ public class Client implements Runnable {
         String tyString = Values.DISCONNECT_PROTOCOL;
         String mesString = "";
         Message m = new Message(tyString, mesString);
+//        for(int i=0;i<50000;i++ ){
+//            for(int j=0;j<50000;j++){
+//                int b=i+j;
+//            }
+//        }
         obout.writeObject(m);
 
-	
+    
         System.out.println("sent");
-	obin.close();
-	obout.close();
+    obin.close();
+    obout.close();
 
     }
     
@@ -41,6 +46,9 @@ public class Client implements Runnable {
         Client.obout.flush();
         Thread t = new Thread(c);
         t.start();
+        Message Username = new Message(Values.CONNECTIN_PROTOCOL, cg.getUserName());
+        obout.writeObject(Username);
+        System.out.println();
     }
     
     public static void sendMessage() throws IOException {
@@ -55,19 +63,24 @@ public class Client implements Runnable {
     
     public static void receiveMessage(Message msg) throws IOException {
         
+            System.out.println("Received message was called()");
+
         if (msg.mType.equals(Values.TEXT_PROTOCOL)) {
             String textMessage = msg.message;
             String sender = msg.sender;
             String recipent = msg.recipent;
-            String displayMessage = "[" + sender + " to " + recipent + "]:" + msg;
+            String displayMessage = "[" + sender + " to " + recipent + "]:" + textMessage;
             UpdateTextArea(displayMessage);
         }
         
-         if (msg.mType.equals(Values.OBJECTTYPE_LIST_PROTOCOL)) {
+         if (msg.mType.equals(Values.OBJECTTYPE_LIST_PROTOCOL)) 
+         {
 
             ArrayList<String> x=(ArrayList<String>)msg.obMessage;
+            x.add("all");
+            System.out.println("Received Array obj");
             cg.populateListView(x);
-        }
+         }
         
 
 
@@ -80,13 +93,17 @@ public class Client implements Runnable {
         
     }
     
+
+
     public void run() {
         try {
             
             Message incoming;
             
             while (true) {
+                System.out.println("I get the msg object");
                 incoming = (Message) obin.readObject();
+                System.out.println("readUnshared called");
                 receiveMessage(incoming);
             }
             

@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,8 +20,9 @@ public class CServer {
     private static long Port;
 
     private final ServerSocket server;
-    private static ArrayList<Socket> clientSockets;
-    private static ArrayList<String> loginNames;
+    public static ArrayList<Socket> clientSockets;
+    public static ArrayList<String> loginNames;
+    public static ArrayList<ObjectOutputStream> outputstreams;
 //    private final InetAddress localhost;
 
     public CServer() throws IOException {
@@ -29,6 +31,7 @@ public class CServer {
 
         clientSockets = new ArrayList<>();
         loginNames = new ArrayList<>();
+        outputstreams= new ArrayList<>();
         System.out.print(server.getLocalSocketAddress());
         connect();
     }
@@ -41,9 +44,10 @@ public class CServer {
         }
     }
 
-    public synchronized static void addClient(String userTemp, Socket clientSocket) {
+    public synchronized static void addClient(String userTemp, Socket clientSocket,ObjectOutputStream obout) {
         loginNames.add(userTemp);
         clientSockets.add(clientSocket);
+        outputstreams.add(obout);
     }
 
     public synchronized static void removeClient(String userTemp, Socket clientSocket) {
@@ -61,7 +65,7 @@ public class CServer {
         return clientSockets.get(sckNumber);
      }
     
-    public static Object getUserList() {
+    public static ArrayList<String> getUserList() {
         return loginNames;
     }
 
