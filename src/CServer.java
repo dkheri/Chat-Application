@@ -28,7 +28,7 @@ public class CServer {
 
         server = new ServerSocket((int) Values.SERVER_PORT_NUMBER);
         loginNames = new ArrayList<>();
-        outputstreams= new ArrayList<>();
+        outputstreams = new ArrayList<>();
         System.out.print(server.getLocalSocketAddress());
         connect();
     }
@@ -56,6 +56,7 @@ public class CServer {
             }
         }
     }
+
     public static void main(String[] args) {
         try {
             CServer cs = new CServer();

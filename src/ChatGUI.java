@@ -13,7 +13,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import java.util.Vector;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.ListModel;
 
 /**
  *
@@ -361,9 +364,12 @@ public class ChatGUI extends javax.swing.JFrame {
     }
 
     void populateListView(ArrayList<String> l) {
-        Vector<String> v = new Vector(l);
-        listUsers.setListData(v);
-        listUsers.setVisible(true);
+        model.clear();
+        for (String s : l) {
+            model.addElement(s);
+        }
+       listUsers.setModel(model);
+
     }
 
     /**
@@ -430,5 +436,5 @@ public class ChatGUI extends javax.swing.JFrame {
     private javax.swing.JTextField txtgetM;
     // End of variables declaration//GEN-END:variables
     final JFileChooser fc = new JFileChooser();
-
+    DefaultListModel model= new DefaultListModel();
 }

@@ -57,17 +57,19 @@ public class AcceptClient extends Thread{
 
     private void sendMessage(Message msg, int ortIndex) {
         try {
-            CServer.outputstreams.get(ortIndex).writeObject(msg);
+            CServer.outputstreams.get(ortIndex).reset();
+            CServer.outputstreams.get(ortIndex).writeUnshared(msg);
+            CServer.outputstreams.get(ortIndex).flush();
+            
+            for(String s:(ArrayList<String>)msg.obMessage) System.out.println(s);
         } catch (IOException ex) {
             Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     public void updateLists(Message msg) {
-        try {
-           for(ObjectOutputStream ous:CServer.outputstreams) ous.writeObject(msg);
-        } catch (IOException ex) {
-            Logger.getLogger(AcceptClient.class
-                    .getName()).log(Level.SEVERE, null, ex);
+        int i=0;
+        for(;i<CServer.loginNames.size();i++) {
+            sendMessage(msg, i);
         }
     }
 
@@ -77,7 +79,6 @@ public class AcceptClient extends Thread{
             case Values.CONNECTIN_PROTOCOL: {
                 System.out.println();
                 String userTemp = msg.message;
-                System.out.println(obout);
                 CServer.addClient(userTemp, obout);
                 Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.loginNames);
                 updateLists(a);
