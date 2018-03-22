@@ -22,6 +22,9 @@ public class CServer {
     private final ServerSocket server;
     public static ArrayList<String> loginNames;
     public static ArrayList<ObjectOutputStream> outputstreams;
+    public static ArrayList<Message> messageBuffer;
+    
+    public static int REQUEST_PENDING = 0;
 //    private final InetAddress localhost;
 
     public CServer() throws IOException {

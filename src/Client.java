@@ -93,7 +93,11 @@ public class Client implements Runnable {
         if (fileObj == null) {
             obout.writeObject(SentMsg);
         } else if (fileValid) {
-            obout.writeObject(SentMsg);
+            // obout.writeObject(SentMsg);
+            Thread uploadThread=new Thread(new Upload(SentMsg));
+            uploadThread.start();
+
+
         }
 
         // if(userList.size()==1)
@@ -147,7 +151,7 @@ public class Client implements Runnable {
             obout.flush();
         }
         if (msg.mType.equals(Values.FILE_PROTOCOL)) {
-            Thread a= new Thread(new Download());
+            Thread a= new Thread(new Download(msg.obMessage));
             a.start();
         }            
     }

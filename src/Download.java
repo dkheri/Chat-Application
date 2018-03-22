@@ -6,9 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -21,57 +26,23 @@ import java.util.logging.Logger;
  */
 public class Download implements Runnable {
 
-    File fileObj;
-    String Path;
+    byte fileArray[];
+    File file;
 
-    public Download(File fileObj, String Path) {
-        this.Path = Path;
-        this.fileObj = fileObj;
-    }
-    public Download(){
-       fileObj= new File("try");
+    public Download(Object byteArray) {
+        this.fileArray= (byte[]) byteArray;
+        file = new File("try");
     }
 
     @Override
     public void run() {
-        FileInputStream in = null;
-        FileOutputStream out = null;
+        Path p= file.toPath();
         try {
-
-            in = new FileInputStream(fileObj);
-            out = new FileOutputStream(Path);//fileNAme as well should be included in the path
-
-            int c;
-            try {
-                while ((c = in.read()) != -1) {
-                    out.write(c);
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } 
-        catch (FileNotFoundException ex) {
+            Files.write(p, fileArray,StandardOpenOption.CREATE);
+        } catch (IOException ex) {
             Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(Download.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-
         }
-        
-
+        JOptionPane.showMessageDialog(null, "Done");
     }
 
 }

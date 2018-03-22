@@ -21,8 +21,7 @@ public class AcceptClient extends Thread {
     public ObjectInputStream obin;
     public ObjectOutputStream obout;
     private boolean cont;
-    private ArrayList<Message> messageBuffer;
-    private static int REQUEST_PENDING = 0;
+    
 
     public AcceptClient(Socket cs) throws IOException {
         this.cont = true;
@@ -31,7 +30,7 @@ public class AcceptClient extends Thread {
         this.obout = new ObjectOutputStream(cs.getOutputStream());
         obout.flush();
         this.obin = new ObjectInputStream(cs.getInputStream());
-        messageBuffer = new ArrayList<>();
+        CServer.messageBuffer = new ArrayList<>();
         start();
 
     }
@@ -54,6 +53,7 @@ public class AcceptClient extends Thread {
 
     private void sendMessage(Message msg, int ortIndex) {
         try {
+//            System.out.println(msg);
             CServer.outputstreams.get(ortIndex).reset();
             CServer.outputstreams.get(ortIndex).writeUnshared(msg);
             CServer.outputstreams.get(ortIndex).flush();
@@ -109,9 +109,8 @@ public class AcceptClient extends Thread {
             }
             case Values.FILE_PROTOCOL: {
                 Message newMsge = new Message(Values.REQUEST_FILE_PROTOCOL, msg.recipent, Values.SERVER_USER_NAME, msg.message);
-                newMsge.obMessage = (Object) messageBuffer.size();
-                messageBuffer.add(msg);
-                REQUEST_PENDING++;
+                newMsge.obMessage = (Object) CServer.messageBuffer.size();
+                CServer.REQUEST_PENDING++;
                 for (String s : CServer.loginNames) {
                     if (s.equals(newMsge.recipent)) {
                         sendMessage(newMsge, CServer.loginNames.indexOf(s));
@@ -121,11 +120,12 @@ public class AcceptClient extends Thread {
                 break;
             }
             case Values.FILE_REQUEST_RESPONSE: {
-                REQUEST_PENDING--;
-                if (msg.mType.equals(Values.FILE_REQUEST_YES)) {
+//                System.out.println(msg);
+                CServer.REQUEST_PENDING--;
+                if (msg.message.equals(Values.FILE_REQUEST_YES)) {
                     int messageBuff = (Integer) msg.obMessage;
-                    Message newMsge = messageBuffer.get(messageBuff);
-                    newMsge.message = null;
+                    Message newMsge = CServer.messageBuffer.get(messageBuff);
+                    newMsge.message = "";
                     for (String s : CServer.loginNames) {
                         if (s.equals(newMsge.recipent)) {
                             sendMessage(newMsge, CServer.loginNames.indexOf(s));
@@ -133,8 +133,8 @@ public class AcceptClient extends Thread {
                         }
                     }
                 }
-                if (REQUEST_PENDING == 0) {
-                    messageBuffer.clear();
+                if (CServer.REQUEST_PENDING == 0) {
+                    CServer.messageBuffer.clear();
                 }
             }
             case Values.DISCONNECT_PROTOCOL: {
