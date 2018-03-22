@@ -29,14 +29,13 @@ public class CServer {
         server = new ServerSocket((int) Values.SERVER_PORT_NUMBER);
         loginNames = new ArrayList<>();
         outputstreams = new ArrayList<>();
-        System.out.print(server.getLocalSocketAddress());
         connect();
     }
 
     public void connect() throws IOException {
+        System.out.println("Server is running!!!! Waiting for connections");
         while (true) {
             Socket clienSocket = this.server.accept();
-            System.out.println("here");
             Thread runThread = new Thread(new AcceptClient(clienSocket));
         }
     }
@@ -47,13 +46,16 @@ public class CServer {
     }
 
     public synchronized static void removeClient(String userTemp) {
-        int i;
+        int i = -1;
         for (String s : loginNames) {
             if (s.equals(userTemp)) {
                 i = loginNames.indexOf(s);
-                loginNames.remove(s);
-                outputstreams.remove(i);
+                break;
             }
+        }
+        if (i > -1) {
+            loginNames.remove(i);
+            outputstreams.remove(i);
         }
     }
 

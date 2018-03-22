@@ -4,27 +4,25 @@
  * and open the template in the editor.
  */
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Meluleki
  */
-public class AcceptClient extends Thread{
-    
+public class AcceptClient extends Thread {
+
     public Socket clientSocket;
     public ObjectInputStream obin;
     public ObjectOutputStream obout;
     private boolean cont;
+    private ArrayList<Message> messageBuffer;
+    private static int REQUEST_PENDING = 0;
 
     public AcceptClient(Socket cs) throws IOException {
         this.cont = true;
@@ -33,7 +31,7 @@ public class AcceptClient extends Thread{
         this.obout = new ObjectOutputStream(cs.getOutputStream());
         obout.flush();
         this.obin = new ObjectInputStream(cs.getInputStream());
-
+        messageBuffer = new ArrayList<>();
         start();
 
     }
@@ -46,9 +44,9 @@ public class AcceptClient extends Thread{
                 msgFromClien = (Message) obin.readObject();
                 recMessage(msgFromClien);
             } catch (IOException ex) {
-                Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, ex.getMessage() + "\n" + ex.getCause());
             } catch (ClassNotFoundException ex) {
-                return;
+                JOptionPane.showMessageDialog(null, ex.getMessage() + "\n" + ex.getCause());
             }
 
         }
@@ -60,12 +58,25 @@ public class AcceptClient extends Thread{
             CServer.outputstreams.get(ortIndex).writeUnshared(msg);
             CServer.outputstreams.get(ortIndex).flush();
         } catch (IOException ex) {
-            Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error");
         }
     }
+
+    public void sendMessage(Message msg, ArrayList<String> listofuser) {
+        for (String list : listofuser) {
+            for (String loggedin : CServer.loginNames) {
+                if (list.equals(loggedin)) {
+                    Message m = new Message(Values.TEXT_PROTOCOL, loggedin, msg.sender, msg.message);
+                    int i = CServer.loginNames.indexOf(loggedin);
+                    sendMessage(m, i);
+                }
+            }
+        }
+    }
+
     public void updateLists(Message msg) {
-        int i=0;
-        for(;i<CServer.loginNames.size();i++) {
+        int i = 0;
+        for (; i < CServer.loginNames.size(); i++) {
             sendMessage(msg, i);
         }
     }
@@ -91,18 +102,46 @@ public class AcceptClient extends Thread{
                 }
                 break;
             }
-            case Values.DISCONNECT_PROTOCOL: {
-                try {
-                    obin.close();
-                    obout.close();
-                    clientSocket.close();
-                    CServer.removeClient(msg.sender);
-                    this.cont = false;
+            case Values.BRODCAST_PROTOCOL: {
 
-                } catch (IOException ex) {
-                    Logger.getLogger(AcceptClient.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                sendMessage(msg, (ArrayList<String>) msg.obMessage);
+                break;
+            }
+            case Values.FILE_PROTOCOL: {
+                Message newMsge = new Message(Values.REQUEST_FILE_PROTOCOL, msg.recipent, Values.SERVER_USER_NAME, msg.message);
+                newMsge.obMessage = (Object) messageBuffer.size();
+                messageBuffer.add(msg);
+                REQUEST_PENDING++;
+                for (String s : CServer.loginNames) {
+                    if (s.equals(newMsge.recipent)) {
+                        sendMessage(newMsge, CServer.loginNames.indexOf(s));
+                        break;
+                    }
                 }
+                break;
+            }
+            case Values.FILE_REQUEST_RESPONSE: {
+                REQUEST_PENDING--;
+                if (msg.mType.equals(Values.FILE_REQUEST_YES)) {
+                    int messageBuff = (Integer) msg.obMessage;
+                    Message newMsge = messageBuffer.get(messageBuff);
+                    newMsge.message = null;
+                    for (String s : CServer.loginNames) {
+                        if (s.equals(newMsge.recipent)) {
+                            sendMessage(newMsge, CServer.loginNames.indexOf(s));
+                            break;
+                        }
+                    }
+                }
+                if (REQUEST_PENDING == 0) {
+                    messageBuffer.clear();
+                }
+            }
+            case Values.DISCONNECT_PROTOCOL: {
+                CServer.removeClient(msg.sender);
+                Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.loginNames);
+                updateLists(a);
+                this.cont = false;
                 break;
             }
 

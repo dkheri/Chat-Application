@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -12,11 +11,13 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import java.util.Vector;
+import java.util.*;
 import javax.swing.DefaultListModel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
+import javax.swing.JProgressBar;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileFilter;
 
 /**
  *
@@ -33,27 +34,85 @@ public class ChatGUI extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        pBar = new JProgressBar(0, 100);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (btnConnect.getText().equals("Disconnect")) {
+                if (!btnConnect.getText().equals("Connect")) {
                     try {
-                        JOptionPane.showMessageDialog(null, "Please wait a few seconds while we close connections to server");
                         Client.disconnect();
-                        JOptionPane.showMessageDialog(null, "GoodBye");
-                        e.getWindow().dispose();
-
                     } catch (IOException ex) {
                         Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } else {
-                    JOptionPane.showMessageDialog(null, "GoodBye");
+                    timer = new Timer();
+                    TimerTask tt = new TimerTask() {
+                        final int max = 100;
+                        private int count = 0;
+
+                        @Override
+                        public void run() {
+                            if (count == max) {
+                                try {
+                                    Client.obin.close();
+                                    Client.obout.close();
+                                } catch (IOException ex) {
+                                    Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                                timer.cancel();
+                                System.exit(0);
+                            } else {
+                                count += 10;
+                                pBar.setValue(count);
+                            }
+                        }
+
+                        int getProgress() {
+                            return count;
+                        }
+                    };
+                    timer.schedule(tt, 1000, 1000);
+                    JOptionPane.showMessageDialog(null, pBar);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+
+            }
+        }
+        );
+        fc = new JFileChooser();
+        fc.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                if (f.exists()) {
+                    if (f.getName().endsWith(".gif")
+                            || f.getName().endsWith(".jpeg")
+                            || f.getName().endsWith(".jpg")
+                            || f.getName().endsWith(".txt")
+                            || f.getName().endsWith(".pdf")
+                            || f.getName().endsWith(".mp3")
+                            || f.getName().endsWith(".mp4")
+                            || f.getName().endsWith(".png")
+                            || f.isDirectory()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public String getDescription() {
+                return "*.gif,*.JPEG,*.mp3,*.mp4,*.txt,*.pdf";
+            }
         });
-//        this.setDefaultCloseOperation(getConnceted());
     }
 
     /**
@@ -291,32 +350,9 @@ public class ChatGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
 
         int returnVal = fc.showOpenDialog(this);
-//        fc.setFileFilter(new FileFilter() {
-//            @Override
-//            public boolean accept(File f) {
-//                if (f.exists()) {
-//                    if (f.getName().endsWith(".gif")
-//                            || f.getName().endsWith(".JPEG".toLowerCase())
-//                            || f.getName().endsWith(".txt")
-//                            || f.getName().endsWith(".pdf")
-//                            || f.getName().endsWith(".mp3")
-//                            || f.getName().endsWith(".mp4")
-//                            || f.getName().endsWith(".PNG")) {
-//                        return true;
-//                    }
-//                }
-//                return false;
-//            }
-//
-//            @Override
-//            public String getDescription() {
-//                return ".gif, .JPEG, .txt, .pdf";
-//            }
-//        });
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            txtgetM.setText(file.getAbsolutePath());
-            txtgetM.setEditable(false);
+            selectedFile = fc.getSelectedFile();
+            txtgetFILE.setText(selectedFile.getAbsolutePath());
         }
     }//GEN-LAST:event_btnBrowseActionPerformed
 
@@ -324,10 +360,10 @@ public class ChatGUI extends javax.swing.JFrame {
         try {
             // TODO add your handling code here:
             Client.sendMessage();
+            selectedFile=null;
 //            taMsgs.append(txtgetM.getText());
-
         } catch (IOException ex) {
-            Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage()+"\n"+ex.getCause());
         }
     }//GEN-LAST:event_btnSendActionPerformed
 
@@ -339,26 +375,48 @@ public class ChatGUI extends javax.swing.JFrame {
         try {
             // TODO add your handling code here:
             Client.connect(txtSA.getText());
+
         } catch (IOException ex) {
-            Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage()+"\n"+ex.getCause());
         }
         btnConnect.setText(btnConnect.getText().equals("Connect") ? "Disconnect" : "Connect");
     }//GEN-LAST:event_btnConnectActionPerformed
+    void setLookAndFell() {
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     void putToTA(String m) {
         taMsgs.append(m);
     }
 
     String getUserName() {
-
         return txtUser.getText();
 
     }
 
-    String getSelectedUser() {
-        return listUsers.getSelectedValue();
+    List<String> getSelectedUser() {
+        List<String> list = listUsers.getSelectedValuesList();
+        return list;
     }
-
+    public File getFile(){
+        return selectedFile;
+    }
     public String getSendTextArea() {
         return txtgetM.getText();
     }
@@ -368,7 +426,7 @@ public class ChatGUI extends javax.swing.JFrame {
         for (String s : l) {
             model.addElement(s);
         }
-       listUsers.setModel(model);
+        listUsers.setModel(model);
 
     }
 
@@ -386,16 +444,24 @@ public class ChatGUI extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ChatGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatGUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ChatGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatGUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ChatGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatGUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ChatGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ChatGUI.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -404,8 +470,10 @@ public class ChatGUI extends javax.swing.JFrame {
             public void run() {
                 try {
                     new ChatGUI().setVisible(true);
+
                 } catch (IOException ex) {
-                    Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ChatGUI.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
@@ -435,6 +503,9 @@ public class ChatGUI extends javax.swing.JFrame {
     private javax.swing.JTextField txtgetFILE;
     private javax.swing.JTextField txtgetM;
     // End of variables declaration//GEN-END:variables
-    final JFileChooser fc = new JFileChooser();
-    DefaultListModel model= new DefaultListModel();
+    final JFileChooser fc;
+    private DefaultListModel model = new DefaultListModel();
+    private JProgressBar pBar;
+    private Timer timer;
+    private File selectedFile;
 }

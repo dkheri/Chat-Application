@@ -14,10 +14,11 @@ public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
     public final String mType;
-    public final String recipent;
-    public final String sender;
-    public final String message;
-    public final Object obMessage;
+    public String recipent;
+    public String sender;
+    public String message;
+    public Object obMessage;
+    public Object file;
 
 //    private File filetoSend;
     public Message(String mType, String recipent, String sender, String message) {
@@ -47,8 +48,7 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-       return this.mType+" "+this.recipent+" "+this.sender+" "+this.message;
+        return this.mType + " " + this.recipent + " " + this.sender + " " + this.message;
     }
-    
 
 }

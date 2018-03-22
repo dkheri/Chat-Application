@@ -11,8 +11,8 @@
  */
 public class User {
 
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
     private String currentAdress;
 
     public User(String username, String password) {
@@ -31,5 +31,11 @@ public class User {
     @Override
     public String toString(){
         return this.username+", "+this.password;
+    }
+    public static void main(String[] args){
+        String a="";
+        if(a==null){
+            System.out.println("Null");
+        }
     }
 }
