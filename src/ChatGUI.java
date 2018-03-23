@@ -17,7 +17,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
@@ -185,7 +184,7 @@ public class ChatGUI extends javax.swing.JFrame {
             }
         });
 
-        btnSignup.setText("singup");
+        btnSignup.setText("Sign up");
         btnSignup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSignupActionPerformed(evt);
@@ -371,15 +370,15 @@ public class ChatGUI extends javax.swing.JFrame {
         String to = listUsers.getSelectedValue();
         String from = txtUser.getText();
         String message = txtgetM.getText();
-        List multTo = getSelectedUser();
+        List multTo = getSelectedUsers();
         File file = getFile();
         Client.sendMessage(to, from, message, multTo, file);
         String str;
         str = "[Me" + " to ";
-        if (getSelectedUser().size() > 1) {
+        if (multTo.size() > 1) {
             str += "Multiple";
         } else {
-            str += listUsers.getSelectedValue();
+            str += to;
         }
         str += "]: ";
         if (txtgetFILE.getText().equals("")) {
@@ -442,7 +441,7 @@ public class ChatGUI extends javax.swing.JFrame {
 
     }
 
-    List<String> getSelectedUser() {
+    List<String> getSelectedUsers() {
         List<String> list = listUsers.getSelectedValuesList();
         return list;
     }
@@ -543,4 +542,11 @@ public class ChatGUI extends javax.swing.JFrame {
     private File selectedFile;
     private final JOptionPane optionPane;
     private JDialog dialog;
+
+    void resetThings() {
+       txtUser.setText(""); 
+       pwdpass.setText("");
+       btnlogin.setText("login");
+       btnSignup.setEnabled(true);
+    }
 }

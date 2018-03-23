@@ -86,7 +86,7 @@ public class Client implements Runnable {
                     SentMsg = new Message(Values.FILE_PROTOCOL, recipent, sender, messageTxt);
                     SentMsg.file = fileObj;
                     fileValid = fileValidation(fileObj);
-                    SentMsg.fileExtentsion = fileObj.getName();
+                    SentMsg.fileName = fileObj.getName();
                 }
 
             } else {
@@ -100,7 +100,7 @@ public class Client implements Runnable {
 
                     SentMsg = new Message(Values.BRODCAST_FILE_PROTOCOL, "null", sender, messageTxt);
                     SentMsg.file = fileObj;
-                    SentMsg.fileExtentsion = fileObj.getName();
+                    SentMsg.fileName = fileObj.getName();
                     fileValid = fileValidation(fileObj);
                 }
 
@@ -160,6 +160,7 @@ public class Client implements Runnable {
         if (msg.mType.equals(Values.REQUEST_FILE_PROTOCOL)) {
             int response = JOptionPane.showConfirmDialog(null, msg.message + "\nDo you want to receive the file?");
             Message newMessage = new Message(Values.FILE_REQUEST_RESPONSE, Values.SERVER_USER_NAME, msg.recipent, msg.obMessage);
+            newMessage.fileNumber=msg.fileNumber;
             if (response == 0) {
                 newMessage.message = Values.FILE_REQUEST_YES;
             } else {
@@ -169,7 +170,7 @@ public class Client implements Runnable {
             obout.flush();
         }
         if (msg.mType.equals(Values.FILE_PROTOCOL)) {
-            Thread a = new Thread(new Download(msg.obMessage, (String) msg.fileExtentsion));
+            Thread a = new Thread(new Download(msg.file, (String) msg.fileName));
             a.start();
         }
         if (msg.mType.equals(Values.LOGIN_RESPONSE_PROTOCOL)) {
@@ -177,11 +178,12 @@ public class Client implements Runnable {
                 JOptionPane.showMessageDialog(null, "You are online.");
             } else {
                 JOptionPane.showMessageDialog(null, "Authentication failed");
+                cg.resetThings();
             }
         }
         if (msg.mType.equals(Values.SIGN_UP_RESPONSE_PROTCOL)) {
             if (msg.message.equals(Values.SIGN_UP_RESPONSE_PROTCOL_DONE)) {
-                JOptionPane.showMessageDialog(null, "You are singed up with your user and password");
+                JOptionPane.showMessageDialog(null, "You are signed up with your user and password");
             } else {
                 JOptionPane.showMessageDialog(null, "Your credentials have been updated");
             }

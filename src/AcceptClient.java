@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -75,6 +77,22 @@ public class AcceptClient extends Thread {
         }
     }
 
+    public void sendFile(Message msg, ArrayList<String> list) {
+        for (String lUsers : list) {
+            for (String loggedin : CServer.loginNames) {
+                if (list.equals(loggedin)) {
+                    Message newMsge = new Message(Values.REQUEST_FILE_PROTOCOL, msg.recipent, Values.SERVER_USER_NAME, msg.message);
+                    newMsge.fileNumber = (Object) CServer.messageBuffer.size();
+                    CServer.messageBuffer.add(msg);
+                    CServer.REQUEST_PENDING++;
+                    sendMessage(newMsge, CServer.loginNames.indexOf(lUsers));
+                    System.out.println("Requestion sent to" + lUsers);
+                    break;
+                }
+            }
+        }
+    }
+
     public void updateLists(Message msg) {
         int i = 0;
         for (; i < CServer.loginNames.size(); i++) {
@@ -100,14 +118,24 @@ public class AcceptClient extends Thread {
                 }
                 break;
             }
-            case Values.BRODCAST_PROTOCOL: {
-
+            case Values.BRODACAST_TEXT_PROTOCOL: {
                 sendMessage(msg, (ArrayList<String>) msg.obMessage);
                 break;
             }
+            case Values.BRODCAST_FILE_PROTOCOL: {
+                String from = msg.sender;
+                ArrayList<String> s = (ArrayList<String>) msg.obMessage;
+                Message newMessage;
+                for (String user : s) {
+                    newMessage = new Message(Values.FILE_PROTOCOL, user, from, msg.message);
+                    newMessage.file = msg.file;
+                    recMessage(newMessage);
+                }
+                break;
+            }
             case Values.FILE_PROTOCOL: {
-                Message newMsge = new Message(Values.REQUEST_FILE_PROTOCOL, msg.recipent, Values.SERVER_USER_NAME, msg.message);
-                newMsge.obMessage = (Object) CServer.messageBuffer.size();
+                Message newMsge = new Message(Values.REQUEST_FILE_PROTOCOL, (String) msg.recipent, Values.SERVER_USER_NAME, msg.message);
+                newMsge.fileNumber = (Object) CServer.messageBuffer.size();
                 CServer.messageBuffer.add(msg);
                 CServer.REQUEST_PENDING++;
                 for (String s : CServer.loginNames) {
@@ -122,7 +150,7 @@ public class AcceptClient extends Thread {
 //                System.out.println(msg);
                 CServer.REQUEST_PENDING--;
                 if (msg.message.equals(Values.FILE_REQUEST_YES)) {
-                    int messageBuff = (Integer) msg.obMessage;
+                    int messageBuff = (Integer) msg.fileNumber;
                     Message newMsge = CServer.messageBuffer.get(messageBuff);
                     newMsge.message = "";
                     for (String s : CServer.loginNames) {
@@ -156,7 +184,7 @@ public class AcceptClient extends Thread {
                         CServer.addClient(userTemp, obout);
                         newMsge = new Message(Values.LOGIN_RESPONSE_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, Values.LOGIN_RESPONSE_PROTOCOL_YES);
                         if (getSenderIndex(newMsge.recipent) < CServer.loginNames.size()) {
-                            sendMessage(msg, getSenderIndex(newMsge.recipent));
+                            sendMessage(newMsge, CServer.loginNames.indexOf(msg.sender));
                         }
                         Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.loginNames);
                         updateLists(a);
@@ -164,6 +192,16 @@ public class AcceptClient extends Thread {
                     }
                 }
                 newMsge = new Message(Values.LOGIN_RESPONSE_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, "");
+                try {
+                    obout.writeObject(newMsge);
+                    obout.close();
+                    obout.close();
+                    obin.close();
+                    this.cont = false;
+                } catch (IOException ex) {
+                    Logger.getLogger(AcceptClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
                 if (getSenderIndex(newMsge.recipent) < CServer.loginNames.size()) {
                     sendMessage(msg, getSenderIndex(newMsge.recipent));
                 }
@@ -178,6 +216,7 @@ public class AcceptClient extends Thread {
                     newMsge = new Message(Values.SIGN_UP_RESPONSE_PROTCOL, msg.sender, Values.SERVER_USER_NAME, Values.SIGN_UP_RESPONSE_PROTCOL_DONE);
                     CServer.users.add(tempUser);
                     CServer.saveUsers();
+                    sendMessage(newMsge, getSenderIndex(msg.sender));
                 } else {
                     newMsge = new Message(Values.SIGN_UP_RESPONSE_PROTCOL, msg.sender, Values.SERVER_USER_NAME, "");
                 }
