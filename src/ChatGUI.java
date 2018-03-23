@@ -263,6 +263,7 @@ public class ChatGUI extends javax.swing.JFrame {
         taMsgs.setColumns(20);
         taMsgs.setRows(5);
         jScrollPane1.setViewportView(taMsgs);
+        taMsgs.setEditable(false);
 
         txtgetM.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
 
@@ -350,7 +351,7 @@ public class ChatGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         Message msg = new Message(Values.SIGN_UP_PROTOCOL, Values.SERVER_USER_NAME, txtUser.getText(), pwdpass.getPassword());
         Client.connect(txtSA.getText());
-        Client.sendMessage(msg);
+        Client.sendMessageLogin(msg);
         btnSignup.setEnabled(false);
         btnlogin.setText("Log Out");
     }//GEN-LAST:event_btnSignupActionPerformed
@@ -367,7 +368,12 @@ public class ChatGUI extends javax.swing.JFrame {
 
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
         // TODO add your handling code here:
-        Client.sendMessage();
+        String to = listUsers.getSelectedValue();
+        String from = txtUser.getText();
+        String message = txtgetM.getText();
+        List multTo = getSelectedUser();
+        File file = getFile();
+        Client.sendMessage(to, from, message, multTo, file);
         String str;
         str = "[Me" + " to ";
         if (getSelectedUser().size() > 1) {
@@ -376,12 +382,12 @@ public class ChatGUI extends javax.swing.JFrame {
             str += listUsers.getSelectedValue();
         }
         str += "]: ";
-        if(txtgetFILE.getText()==null){
-            str+=txtgetM.getText();
-        }else{
-            str+="file "+getFile().getName()+" Sent";
+        if (txtgetFILE.getText().equals("")) {
+            str += txtgetM.getText();
+        } else {
+            str += "file " + getFile().getName() + " Sent";
         }
-        str+="\n";
+        str += "\n";
         taMsgs.append(str);
         selectedFile = null;
         txtgetFILE.setText("");
@@ -397,11 +403,11 @@ public class ChatGUI extends javax.swing.JFrame {
         if (btnSignup.isEnabled()) {
             Message msg = new Message(Values.LOGIN_PROTOCOL, Values.SERVER_USER_NAME, txtUser.getText(), pwdpass.getPassword());
             Client.connect(txtSA.getText());
-            Client.sendMessage(msg);
+            Client.sendMessageLogin(msg);
 
         } else {
             Client.disconnect();
-            model=new DefaultListModel();
+            model = new DefaultListModel();
             listUsers.setModel(model);
         }
         btnlogin.setText(btnlogin.getText().equals("login") ? "logout" : "login");

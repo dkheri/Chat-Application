@@ -55,7 +55,7 @@ public class Client implements Runnable {
         return s == null || s.trim().isEmpty();
     }
 
-    public static void sendMessage(Message msg) {
+    public static void sendMessageLogin(Message msg) {
         try {
             obout.writeObject(msg);
             obout.flush();
@@ -64,13 +64,13 @@ public class Client implements Runnable {
         }
     }
 
-    public static void sendMessage() {
+    public static void sendMessage(String to, String from,String message, List l, File f) {
+        Message SentMsg;
         try {
-            Message SentMsg;
-            String messageTxt = cg.getSendTextArea();
-            String sender = cg.getUserName();
-            List userList = cg.getSelectedUser();
-            File fileObj = cg.getFile();
+            String messageTxt = message;
+            String sender = to;
+            List userList = l;
+            File fileObj = f;
             boolean fileValid = false;
 
             if (userList.size() == 1) {
@@ -86,7 +86,7 @@ public class Client implements Runnable {
                     SentMsg = new Message(Values.FILE_PROTOCOL, recipent, sender, messageTxt);
                     SentMsg.file = fileObj;
                     fileValid = fileValidation(fileObj);
-                    SentMsg.fileExtentsion=fileObj.getName();
+                    SentMsg.fileExtentsion = fileObj.getName();
                 }
 
             } else {
@@ -100,7 +100,7 @@ public class Client implements Runnable {
 
                     SentMsg = new Message(Values.BRODCAST_FILE_PROTOCOL, "null", sender, messageTxt);
                     SentMsg.file = fileObj;
-                    SentMsg.fileExtentsion=fileObj.getName();
+                    SentMsg.fileExtentsion = fileObj.getName();
                     fileValid = fileValidation(fileObj);
                 }
 
@@ -172,17 +172,17 @@ public class Client implements Runnable {
             Thread a = new Thread(new Download(msg.obMessage, (String) msg.fileExtentsion));
             a.start();
         }
-        if(msg.mType.equals(Values.LOGIN_RESPONSE_PROTOCOL)){
-            if(msg.message.equals(Values.LOGIN_RESPONSE_PROTOCOL_YES)){
+        if (msg.mType.equals(Values.LOGIN_RESPONSE_PROTOCOL)) {
+            if (msg.message.equals(Values.LOGIN_RESPONSE_PROTOCOL_YES)) {
                 JOptionPane.showMessageDialog(null, "You are online.");
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(null, "Authentication failed");
             }
         }
-        if(msg.mType.equals(Values.SIGN_UP_RESPONSE_PROTCOL)){
-            if(msg.message.equals(Values.SIGN_UP_RESPONSE_PROTCOL_DONE)){
+        if (msg.mType.equals(Values.SIGN_UP_RESPONSE_PROTCOL)) {
+            if (msg.message.equals(Values.SIGN_UP_RESPONSE_PROTCOL_DONE)) {
                 JOptionPane.showMessageDialog(null, "You are singed up with your user and password");
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(null, "Your credentials have been updated");
             }
         }

@@ -23,7 +23,7 @@ public class Upload implements Runnable
             } catch (IOException ex) {
                 Logger.getLogger(Upload.class.getName()).log(Level.SEVERE, null, ex);
             }
-		msg.obMessage=byteArr;
+		msg.file=byteArr;
 
 	}
 
