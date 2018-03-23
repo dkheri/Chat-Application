@@ -2,7 +2,6 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -15,14 +14,17 @@ public class Client implements Runnable {
     static Socket client;
     static Client c;
 
-    static void disconnect() throws IOException, InterruptedException {
-        String tyString = Values.DISCONNECT_PROTOCOL;
-        String mesString = "";
-        Message m = new Message(tyString, mesString);
-        obout.writeObject(m);
-        obin.close();
-        obout.close();
-        TimeUnit.SECONDS.sleep(3);
+    static void disconnect() {
+        try {
+            String tyString = Values.DISCONNECT_PROTOCOL;
+            String mesString = "";
+            Message m = new Message(tyString, Values.SERVER_USER_NAME, cg.getUserName(), "");
+            obout.writeObject(m);
+            obin.close();
+            obout.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
@@ -33,73 +35,89 @@ public class Client implements Runnable {
         cg.setVisible(true);
     }
 
-    public static void connect(String serverAdress) throws IOException {
-
-        client = new Socket(serverAdress, (int) Values.SERVER_PORT_NUMBER);
-        Client.obin = new ObjectInputStream(client.getInputStream());
-        Client.obout = new ObjectOutputStream(client.getOutputStream());
-        Client.obout.flush();
-        Thread t = new Thread(c);
-        t.start();
-        Message Username = new Message(Values.CONNECTIN_PROTOCOL, cg.getUserName());
-        obout.writeObject(Username);
-        System.out.println();
+    public static void connect(String serverAdress) {
+        try {
+            client = new Socket(serverAdress, (int) Values.SERVER_PORT_NUMBER);
+            Client.obin = new ObjectInputStream(client.getInputStream());
+            Client.obout = new ObjectOutputStream(client.getOutputStream());
+            Client.obout.flush();
+            Thread t = new Thread(c);
+            t.start();
+            Message Username = new Message(Values.CONNECTIN_PROTOCOL, cg.getUserName());
+            obout.writeObject(Username);
+            System.out.println();
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static boolean empty(final String s) {
         return s == null || s.trim().isEmpty();
     }
 
-    public static void sendMessage() throws IOException {
-        Message SentMsg;
-        String messageTxt = cg.getSendTextArea();
-        String sender = cg.getUserName();
-        List userList = cg.getSelectedUser();
-        File fileObj = cg.getFile();
-        boolean fileValid = false;
+    public static void sendMessage(Message msg) {
+        try {
+            obout.writeObject(msg);
+            obout.flush();
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-        if (userList.size() == 1) {
+    public static void sendMessage() {
+        try {
+            Message SentMsg;
+            String messageTxt = cg.getSendTextArea();
+            String sender = cg.getUserName();
+            List userList = cg.getSelectedUser();
+            File fileObj = cg.getFile();
+            boolean fileValid = false;
 
-            String recipent = (String) userList.get(0);
+            if (userList.size() == 1) {
 
-            if (fileObj == null) {
+                String recipent = (String) userList.get(0);
 
-                SentMsg = new Message(Values.TEXT_PROTOCOL, recipent, sender, messageTxt);
+                if (fileObj == null) {
+
+                    SentMsg = new Message(Values.TEXT_PROTOCOL, recipent, sender, messageTxt);
+
+                } else {
+
+                    SentMsg = new Message(Values.FILE_PROTOCOL, recipent, sender, messageTxt);
+                    SentMsg.file = fileObj;
+                    fileValid = fileValidation(fileObj);
+                    SentMsg.fileExtentsion=fileObj.getName();
+                }
 
             } else {
+                // SentMsg = new Message(Values.BRODCAST_PROTOCOL, "null", sender, messageTxt);
 
-                SentMsg = new Message(Values.FILE_PROTOCOL, recipent, sender, messageTxt);
-                SentMsg.file = fileObj;
-                fileValid = fileValidation(fileObj);
+                if (fileObj == null) {
+
+                    SentMsg = new Message(Values.BRODACAST_TEXT_PROTOCOL, "null", sender, messageTxt);
+
+                } else {
+
+                    SentMsg = new Message(Values.BRODCAST_FILE_PROTOCOL, "null", sender, messageTxt);
+                    SentMsg.file = fileObj;
+                    SentMsg.fileExtentsion=fileObj.getName();
+                    fileValid = fileValidation(fileObj);
+                }
+
+                SentMsg.obMessage = userList;
             }
-
-        } else {
-            // SentMsg = new Message(Values.BRODCAST_PROTOCOL, "null", sender, messageTxt);
 
             if (fileObj == null) {
+                obout.writeObject(SentMsg);
+            } else if (fileValid) {
+                // obout.writeObject(SentMsg);
+                Thread uploadThread = new Thread(new Upload(SentMsg));
+                uploadThread.start();
 
-                SentMsg = new Message(Values.BRODACAST_TEXT_PROTOCOL, "null", sender, messageTxt);
-
-            } else {
-
-                SentMsg = new Message(Values.BRODCAST_FILE_PROTOCOL, "null", sender, messageTxt);
-                SentMsg.file = fileObj;
-                fileValid = fileValidation(fileObj);
             }
-
-            SentMsg.obMessage = userList;
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        if (fileObj == null) {
-            obout.writeObject(SentMsg);
-        } else if (fileValid) {
-            // obout.writeObject(SentMsg);
-            Thread uploadThread=new Thread(new Upload(SentMsg));
-            uploadThread.start();
-
-
-        }
-
         // if(userList.size()==1)
         // {
         //     String recipent=(String)userList.get(0);
@@ -151,9 +169,23 @@ public class Client implements Runnable {
             obout.flush();
         }
         if (msg.mType.equals(Values.FILE_PROTOCOL)) {
-            Thread a= new Thread(new Download(msg.obMessage));
+            Thread a = new Thread(new Download(msg.obMessage, (String) msg.fileExtentsion));
             a.start();
-        }            
+        }
+        if(msg.mType.equals(Values.LOGIN_RESPONSE_PROTOCOL)){
+            if(msg.message.equals(Values.LOGIN_RESPONSE_PROTOCOL_YES)){
+                JOptionPane.showMessageDialog(null, "You are online.");
+            }else{
+                JOptionPane.showMessageDialog(null, "Authentication failed");
+            }
+        }
+        if(msg.mType.equals(Values.SIGN_UP_RESPONSE_PROTCOL)){
+            if(msg.message.equals(Values.SIGN_UP_RESPONSE_PROTCOL_DONE)){
+                JOptionPane.showMessageDialog(null, "You are singed up with your user and password");
+            }else{
+                JOptionPane.showMessageDialog(null, "Your credentials have been updated");
+            }
+        }
     }
 
     public static void login() throws IOException {

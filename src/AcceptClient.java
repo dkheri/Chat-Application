@@ -21,7 +21,6 @@ public class AcceptClient extends Thread {
     public ObjectInputStream obin;
     public ObjectOutputStream obout;
     private boolean cont;
-    
 
     public AcceptClient(Socket cs) throws IOException {
         this.cont = true;
@@ -84,10 +83,7 @@ public class AcceptClient extends Thread {
     public void recMessage(Message msg) {
         switch (msg.mType) {
             case Values.CONNECTIN_PROTOCOL: {
-                String userTemp = msg.message;
-                CServer.addClient(userTemp, obout);
-                Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.loginNames);
-                updateLists(a);
+
                 break;
             }
             case Values.TEXT_PROTOCOL: {
@@ -110,6 +106,7 @@ public class AcceptClient extends Thread {
             case Values.FILE_PROTOCOL: {
                 Message newMsge = new Message(Values.REQUEST_FILE_PROTOCOL, msg.recipent, Values.SERVER_USER_NAME, msg.message);
                 newMsge.obMessage = (Object) CServer.messageBuffer.size();
+                CServer.messageBuffer.add(msg);
                 CServer.REQUEST_PENDING++;
                 for (String s : CServer.loginNames) {
                     if (s.equals(newMsge.recipent)) {
@@ -144,8 +141,70 @@ public class AcceptClient extends Thread {
                 this.cont = false;
                 break;
             }
+            case Values.LOGIN_PROTOCOL: {
+                String userTemp = msg.sender;
+                char[] passtemp = (char[]) msg.obMessage;
+                User tempUser = new User(userTemp, passtemp);
+                Message newMsge;
+                Message message = new Message(Values.CONNECTIN_PROTOCOL, "");
+                message.message = msg.sender;
+                for (User checkUser : CServer.users) {
+                    if (tempUser.isCorrect(checkUser)) {
+                        CServer.addClient(userTemp, obout);
+                        newMsge = new Message(Values.LOGIN_RESPONSE_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, Values.LOGIN_RESPONSE_PROTOCOL_YES);
 
+                        if (getSenderIndex(newMsge.recipent) < CServer.loginNames.size()) {
+                            sendMessage(msg, getSenderIndex(newMsge.recipent));
+                        }
+                        Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.loginNames);
+                        updateLists(a);
+                        return;
+                    }
+                }
+                newMsge = new Message(Values.LOGIN_RESPONSE_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, "");
+                if (getSenderIndex(newMsge.recipent) < CServer.loginNames.size()) {
+                    sendMessage(msg, getSenderIndex(newMsge.recipent));
+                }
+            }
+            case Values.SIGN_UP_PROTOCOL: {
+                String userTemp = msg.sender;
+                char[] passtemp = (char[]) msg.obMessage;
+                User tempUser = new User(userTemp, passtemp);
+                Message newMsge;
+                if (userExist(tempUser)) {
+                    newMsge = new Message(Values.SIGN_UP_RESPONSE_PROTCOL, msg.sender, Values.SERVER_USER_NAME, Values.SIGN_UP_RESPONSE_PROTCOL_DONE);
+                    CServer.users.add(tempUser);
+                    CServer.saveUsers();
+                }else{
+                    newMsge = new Message(Values.SIGN_UP_RESPONSE_PROTCOL, msg.sender, Values.SERVER_USER_NAME, "");
+                }
+                Message message = new Message(Values.LOGIN_PROTOCOL, "", msg.sender, passtemp);
+                recMessage(message);
+                if (getSenderIndex(newMsge.recipent) < CServer.loginNames.size()) {
+                    sendMessage(msg, getSenderIndex(newMsge.recipent));
+                }
+            }
+            default: {
+                break;
+            }
         }
     }
 
+    private int getSenderIndex(String userName) {
+        for (String s : CServer.loginNames) {
+            if (s.equals(userName)) {
+                return CServer.loginNames.indexOf(s);
+            }
+        }
+        return CServer.loginNames.size() + 1;
+    }
+
+    private boolean userExist(User u) {
+        for (User us : CServer.users) {
+            if (us.isCorrect(u)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -19,6 +19,7 @@ public class Message implements Serializable {
     public String message;
     public Object obMessage;
     public Object file;
+    public Object fileExtentsion;
 
 //    private File filetoSend;
     public Message(String mType, String recipent, String sender, String message) {

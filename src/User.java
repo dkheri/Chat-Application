@@ -1,9 +1,11 @@
+
+import java.util.Arrays;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 
 /**
  *
@@ -12,30 +14,41 @@
 public class User {
 
     private final String username;
-    private final String password;
+    private final char[] password;
     private String currentAdress;
 
-    public User(String username, String password) {
+    public User(String username, char[] pass) {
         this.username = username;
-        this.password = password;
+        this.password = pass;
     }
-    public void setCurrentAdd(String add){
-        this.currentAdress=add;
+
+    public void setCurrentAdd(String add) {
+        this.currentAdress = add;
     }
-    public String getCurrentAdd(){
+
+    public String getCurrentAdd() {
         return this.currentAdress;
     }
+
     boolean isCorrect(User u) {
-        return ((u.username.equals(this.username)) && u.password.equals(this.password));
+        return ((u.username.equals(this.username)) && isPasswordCorrect(u.password));
     }
-    @Override
-    public String toString(){
-        return this.username+", "+this.password;
-    }
-    public static void main(String[] args){
-        String a="";
-        if(a==null){
-            System.out.println("Null");
+
+    private boolean isPasswordCorrect(char[] pass) {
+        if (this.password.length != pass.length) {
+            return false;
+        } else {
+            for (int i = 0; i < pass.length; i++) {
+                if (pass[i] != this.password[i]) {
+                    return false;
+                }
+            }
         }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return this.username + ", " + Arrays.toString(this.password);
     }
 }

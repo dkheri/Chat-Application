@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import java.util.*;
 import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.UIManager;
@@ -38,14 +40,13 @@ public class ChatGUI extends javax.swing.JFrame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (!btnConnect.getText().equals("Connect")) {
-                    try {
-                        Client.disconnect();
-                    } catch (IOException ex) {
-                        Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
+                if (!btnSignup.isEnabled()) {
+                    Object ob = e.getSource();
+                    if (ob instanceof JFrame) {
+                        JFrame co = (JFrame) ob;
+                        co.setVisible(false);
                     }
+                    Client.disconnect();
                     timer = new Timer();
                     TimerTask tt = new TimerTask() {
                         final int max = 100;
@@ -72,19 +73,14 @@ public class ChatGUI extends javax.swing.JFrame {
                             return count;
                         }
                     };
-                    timer.schedule(tt, 1000, 1000);
-                    JOptionPane.showMessageDialog(null, pBar);
+                    timer.schedule(tt, 300, 300);
+                    JOptionPane.showMessageDialog(null, pBar, "Please wait", JOptionPane.INFORMATION_MESSAGE, null);
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(300);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(ChatGUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-
             }
         }
         );
@@ -113,6 +109,17 @@ public class ChatGUI extends javax.swing.JFrame {
                 return "*.gif,*.JPEG,*.mp3,*.mp4,*.txt,*.pdf";
             }
         });
+        optionPane = new JOptionPane(pBar, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
+//        initExtra();
+    }
+
+    final void initExtra() {
+        dialog = new JDialog();
+        dialog.setTitle("Information on system.");
+        dialog.setContentPane(optionPane);
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
     }
 
     /**
@@ -133,9 +140,8 @@ public class ChatGUI extends javax.swing.JFrame {
         txtPort = new javax.swing.JTextField();
         txtSA = new javax.swing.JTextField();
         btnlogin = new javax.swing.JButton();
-        btnConnect = new javax.swing.JButton();
         btnSignup = new javax.swing.JButton();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        pwdpass = new javax.swing.JPasswordField();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         listUsers = new javax.swing.JList<>();
@@ -173,11 +179,9 @@ public class ChatGUI extends javax.swing.JFrame {
         txtSA.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
 
         btnlogin.setText("login");
-
-        btnConnect.setText("Connect");
-        btnConnect.addActionListener(new java.awt.event.ActionListener() {
+        btnlogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnConnectActionPerformed(evt);
+                btnloginActionPerformed(evt);
             }
         });
 
@@ -187,8 +191,6 @@ public class ChatGUI extends javax.swing.JFrame {
                 btnSignupActionPerformed(evt);
             }
         });
-
-        jPasswordField1.setText("jPasswordField1");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -202,24 +204,22 @@ public class ChatGUI extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPasswordField1)
+                            .addComponent(pwdpass)
                             .addComponent(txtUser, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE))))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel5)
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(txtSA, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnSignup)
-                        .addGap(19, 19, 19)
-                        .addComponent(btnlogin))
+                        .addComponent(btnSignup, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnConnect, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnlogin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -230,18 +230,19 @@ public class ChatGUI extends javax.swing.JFrame {
                     .addComponent(jLabel5)
                     .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtSA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnlogin)
                     .addComponent(btnSignup))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnConnect))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel3)
-                        .addComponent(jLabel4))
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addComponent(pwdpass, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(8, 8, 8)
+                            .addComponent(txtPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(btnlogin))
+                .addGap(0, 4, Short.MAX_VALUE))
         );
 
         txtPort.setText(""+Values.SERVER_PORT_NUMBER);
@@ -341,9 +342,17 @@ public class ChatGUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    /**
+     *
+     * @param evt
+     */
     private void btnSignupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignupActionPerformed
         // TODO add your handling code here:
+        Message msg = new Message(Values.SIGN_UP_PROTOCOL, Values.SERVER_USER_NAME, txtUser.getText(), pwdpass.getPassword());
+        Client.connect(txtSA.getText());
+        Client.sendMessage(msg);
+        btnSignup.setEnabled(false);
+        btnlogin.setText("Log Out");
     }//GEN-LAST:event_btnSignupActionPerformed
 
     private void btnBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBrowseActionPerformed
@@ -357,30 +366,41 @@ public class ChatGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBrowseActionPerformed
 
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
-        try {
-            // TODO add your handling code here:
-            Client.sendMessage();
-            selectedFile=null;
-//            taMsgs.append(txtgetM.getText());
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage()+"\n"+ex.getCause());
+        // TODO add your handling code here:
+        Client.sendMessage();
+        String str;
+        str = "[Me" + "to";
+        if (getSelectedUser().size() > 0) {
+            str += "Multiple";
+        } else {
+            str += listUsers.getSelectedValue();
         }
+        str += "]: ";
+        taMsgs.append(str);
+        selectedFile = null;
+        txtgetFILE.setText("");
+        txtgetM.setText("");
+//            taMsgs.append(txtgetM.getText());
     }//GEN-LAST:event_btnSendActionPerformed
 
     private void txtPortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPortActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPortActionPerformed
 
-    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        try {
-            // TODO add your handling code here:
+    private void btnloginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnloginActionPerformed
+        if (btnSignup.isEnabled()) {
+            Message msg = new Message(Values.LOGIN_PROTOCOL, Values.SERVER_USER_NAME, txtUser.getText(), pwdpass.getPassword());
             Client.connect(txtSA.getText());
+            Client.sendMessage(msg);
 
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage()+"\n"+ex.getCause());
+        } else {
+            Client.disconnect();
+            model=new DefaultListModel();
+            listUsers.setModel(model);
         }
-        btnConnect.setText(btnConnect.getText().equals("Connect") ? "Disconnect" : "Connect");
-    }//GEN-LAST:event_btnConnectActionPerformed
+        btnlogin.setText(btnlogin.getText().equals("login") ? "logout" : "login");
+        btnSignup.setEnabled(btnlogin.getText().equals("login"));
+    }//GEN-LAST:event_btnloginActionPerformed
     void setLookAndFell() {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -414,9 +434,11 @@ public class ChatGUI extends javax.swing.JFrame {
         List<String> list = listUsers.getSelectedValuesList();
         return list;
     }
-    public File getFile(){
+
+    public File getFile() {
         return selectedFile;
     }
+
     public String getSendTextArea() {
         return txtgetM.getText();
     }
@@ -481,7 +503,6 @@ public class ChatGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBrowse;
-    private javax.swing.JButton btnConnect;
     private javax.swing.JButton btnSend;
     private javax.swing.JButton btnSignup;
     private javax.swing.JButton btnlogin;
@@ -492,10 +513,10 @@ public class ChatGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList<String> listUsers;
+    private javax.swing.JPasswordField pwdpass;
     private javax.swing.JTextArea taMsgs;
     private javax.swing.JTextField txtPort;
     private javax.swing.JTextField txtSA;
@@ -508,4 +529,6 @@ public class ChatGUI extends javax.swing.JFrame {
     private JProgressBar pBar;
     private Timer timer;
     private File selectedFile;
+    private final JOptionPane optionPane;
+    private JDialog dialog;
 }

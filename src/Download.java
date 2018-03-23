@@ -29,9 +29,9 @@ public class Download implements Runnable {
     byte fileArray[];
     File file;
 
-    public Download(Object byteArray) {
+    public Download(Object byteArray,String fileName) {
         this.fileArray= (byte[]) byteArray;
-        file = new File("try");
+        file = new File(fileName);
     }
 
     @Override
