@@ -43,8 +43,10 @@ public class AcceptClient extends Thread {
                 recMessage(msgFromClien);
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage() + "\n" + ex.getCause());
+                return;
             } catch (ClassNotFoundException ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage() + "\n" + ex.getCause());
+                return;
             }
 
         }
@@ -133,6 +135,7 @@ public class AcceptClient extends Thread {
                 if (CServer.REQUEST_PENDING == 0) {
                     CServer.messageBuffer.clear();
                 }
+                break;
             }
             case Values.DISCONNECT_PROTOCOL: {
                 CServer.removeClient(msg.sender);
@@ -152,7 +155,6 @@ public class AcceptClient extends Thread {
                     if (tempUser.isCorrect(checkUser)) {
                         CServer.addClient(userTemp, obout);
                         newMsge = new Message(Values.LOGIN_RESPONSE_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, Values.LOGIN_RESPONSE_PROTOCOL_YES);
-
                         if (getSenderIndex(newMsge.recipent) < CServer.loginNames.size()) {
                             sendMessage(msg, getSenderIndex(newMsge.recipent));
                         }
@@ -165,17 +167,18 @@ public class AcceptClient extends Thread {
                 if (getSenderIndex(newMsge.recipent) < CServer.loginNames.size()) {
                     sendMessage(msg, getSenderIndex(newMsge.recipent));
                 }
+                break;
             }
             case Values.SIGN_UP_PROTOCOL: {
                 String userTemp = msg.sender;
                 char[] passtemp = (char[]) msg.obMessage;
                 User tempUser = new User(userTemp, passtemp);
                 Message newMsge;
-                if (userExist(tempUser)) {
+                if (!userExist(tempUser)) {
                     newMsge = new Message(Values.SIGN_UP_RESPONSE_PROTCOL, msg.sender, Values.SERVER_USER_NAME, Values.SIGN_UP_RESPONSE_PROTCOL_DONE);
                     CServer.users.add(tempUser);
                     CServer.saveUsers();
-                }else{
+                } else {
                     newMsge = new Message(Values.SIGN_UP_RESPONSE_PROTCOL, msg.sender, Values.SERVER_USER_NAME, "");
                 }
                 Message message = new Message(Values.LOGIN_PROTOCOL, "", msg.sender, passtemp);
@@ -183,6 +186,7 @@ public class AcceptClient extends Thread {
                 if (getSenderIndex(newMsge.recipent) < CServer.loginNames.size()) {
                     sendMessage(msg, getSenderIndex(newMsge.recipent));
                 }
+                break;
             }
             default: {
                 break;

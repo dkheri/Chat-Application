@@ -33,8 +33,7 @@ public class CServer {
     static File file;
 //    private final InetAddress localhost;
 
-    public CServer() throws IOException {
-
+    public CServer() throws IOException{
         server = new ServerSocket((int) Values.SERVER_PORT_NUMBER);
         loginNames = new ArrayList<>();
         outputstreams = new ArrayList<>();
@@ -50,18 +49,17 @@ public class CServer {
             BufferedReader br = new BufferedReader(fw);
             String line = br.readLine();
             System.out.println("Reading the files");
-            while (line!=null) {
+            while (line != null) {
                 //this.username + ", " + Arrays.toString(this.password)
-                String username =(String) line.subSequence(0, line.indexOf(","));
+                String username = (String) line.subSequence(0, line.indexOf(","));
                 String pass = line.substring(line.indexOf(","));
-                pass=pass.replace(", ", "");
-                pass=pass.replace("[", "");
-                pass=pass.replace("]", "");
-                System.out.println(pass);
+                pass = pass.replace(", ", "");
+                pass = pass.replace("[", "");
+                pass = pass.replace("]", "");
                 char[] password = pass.toCharArray();
                 User tempUser = new User(username, password);
                 users.add(tempUser);
-                line= br.readLine();
+                line = br.readLine();
             }
             br.close();
             fw.close();
@@ -77,7 +75,7 @@ public class CServer {
         try {
             FileWriter fw = new FileWriter(file);
             for (User s : users) {
-                fw.write(s.toString()+"\n");
+                fw.write(s.toString() + "\n");
             }
             fw.close();
         } catch (IOException ex) {
@@ -86,11 +84,15 @@ public class CServer {
 
     }
 
-    public final void connect() throws IOException {
+    public final void connect() {
         System.out.println("Server is running!!!! Waiting for connections");
         while (true) {
-            Socket clienSocket = this.server.accept();
-            Thread runThread = new Thread(new AcceptClient(clienSocket));
+            try {
+                Socket clienSocket = this.server.accept();
+                Thread runThread = new Thread(new AcceptClient(clienSocket));
+            } catch (IOException ex) {
+                Logger.getLogger(CServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

@@ -369,13 +369,19 @@ public class ChatGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         Client.sendMessage();
         String str;
-        str = "[Me" + "to";
-        if (getSelectedUser().size() > 0) {
+        str = "[Me" + " to ";
+        if (getSelectedUser().size() > 1) {
             str += "Multiple";
         } else {
             str += listUsers.getSelectedValue();
         }
         str += "]: ";
+        if(txtgetFILE.getText()==null){
+            str+=txtgetM.getText();
+        }else{
+            str+="file "+getFile().getName()+" Sent";
+        }
+        str+="\n";
         taMsgs.append(str);
         selectedFile = null;
         txtgetFILE.setText("");

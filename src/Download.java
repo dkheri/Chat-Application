@@ -28,10 +28,18 @@ public class Download implements Runnable {
 
     byte fileArray[];
     File file;
-
+    File dir;
     public Download(Object byteArray,String fileName) {
+        dir= new File("ChatApp files");
+        if(!dir.exists()) {
+            try{
+                dir.mkdir();
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage());
+            }
+        }
         this.fileArray= (byte[]) byteArray;
-        file = new File(fileName);
+        file = new File("chatapp files/"+fileName);
     }
 
     @Override

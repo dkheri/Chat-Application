@@ -158,7 +158,7 @@ public class Client implements Runnable {
         }
 
         if (msg.mType.equals(Values.REQUEST_FILE_PROTOCOL)) {
-            int response = JOptionPane.showConfirmDialog(null, msg.message + "Do you want to receiver the file?");
+            int response = JOptionPane.showConfirmDialog(null, msg.message + "\nDo you want to receive the file?");
             Message newMessage = new Message(Values.FILE_REQUEST_RESPONSE, Values.SERVER_USER_NAME, msg.recipent, msg.obMessage);
             if (response == 0) {
                 newMessage.message = Values.FILE_REQUEST_YES;
