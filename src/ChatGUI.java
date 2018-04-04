@@ -374,7 +374,8 @@ public class ChatGUI extends javax.swing.JFrame {
         File file = getFile();
         Client.sendMessage(to, from, message, multTo, file);
         String str;
-        str = "[Me" + " to ";
+        Date d = new Date();
+        str ="[Me" + " to ";
         if (multTo.size() > 1) {
             str += "Multiple";
         } else {
@@ -387,7 +388,7 @@ public class ChatGUI extends javax.swing.JFrame {
             str += "file " + getFile().getName() + " Sent";
         }
         str += "\n";
-        taMsgs.append(str);
+        if(!to.equals(from))taMsgs.append(str);
         selectedFile = null;
         txtgetFILE.setText("");
         txtgetM.setText("");
@@ -441,6 +442,12 @@ public class ChatGUI extends javax.swing.JFrame {
 
     }
 
+    void clearTextArea()
+    {
+        taMsgs.setText("");
+    }
+
+
     List<String> getSelectedUsers() {
         List<String> list = listUsers.getSelectedValuesList();
         return list;
@@ -449,6 +456,12 @@ public class ChatGUI extends javax.swing.JFrame {
     public File getFile() {
         return selectedFile;
     }
+
+    public String getTA()
+    {
+        return taMsgs.getText();
+    }
+
 
     public String getSendTextArea() {
         return txtgetM.getText();
