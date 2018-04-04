@@ -17,9 +17,9 @@ public class Client implements Runnable {
     static void disconnect() {
         try {
             String tyString = Values.DISCONNECT_PROTOCOL;
-            cg.clearTextArea();
             Message disconnectMessage = new Message(tyString, Values.SERVER_USER_NAME, cg.getUserName(), "");
             Message saveChatHistoryMessage = new Message(Values.SAVE_CHAT_HISTORY_PROTOCOL, Values.SERVER_USER_NAME, cg.getUserName(), cg.getTA());
+            System.out.println(cg.getTA());
             obout.writeObject(saveChatHistoryMessage);
             obout.writeObject(disconnectMessage);
             obin.close();
@@ -27,7 +27,7 @@ public class Client implements Runnable {
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        cg.clearTextArea();
     }
 
     public Client() throws IOException {
@@ -66,18 +66,18 @@ public class Client implements Runnable {
         }
     }
 
-    public static void sendMessage(String to, String from,String message, List l, File f) {
-        Message SentMsg;
+    public static void sendMessage(String to, String from, String message, List l, File f) {
+        Message SentMsg = null;
         try {
             String messageTxt = message;
-            String sender = to;
+            String sender = from;
             List userList = l;
             File fileObj = f;
             boolean fileValid = false;
 
             if (userList.size() == 1) {
 
-                String recipent = (String) userList.get(0);
+                String recipent = to;
 
                 if (fileObj == null) {
 
@@ -91,7 +91,7 @@ public class Client implements Runnable {
                     SentMsg.fileName = fileObj.getName();
                 }
 
-            } else {
+            } else if(userList.size()>1){
                 // SentMsg = new Message(Values.BRODCAST_PROTOCOL, "null", sender, messageTxt);
 
                 if (fileObj == null) {
@@ -139,19 +139,21 @@ public class Client implements Runnable {
     public static void receiveMessage(Message msg) throws IOException {
 
         if (msg.mType.equals(Values.TEXT_PROTOCOL)) {
+
             //Works
             String textMessage = msg.message;
             String sender = msg.sender;
             String recipent = msg.recipent;
-            String SRInfo = "[" + sender + " to " + recipent + "]:";
+            Date d= new Date();
+            String SRInfo =": [" + sender + " to " + recipent + "]:";
             String displayMessage = SRInfo + textMessage + "\n";
             UpdateTextArea(displayMessage);
         }
 
-        if(msg.mType.equals(Values.CHAT_HISTORY_PROTOCOL))
-        {
-            String chatMessage=msg.message;
+        if (msg.mType.equals(Values.CHAT_HISTORY_PROTOCOL)) {
+            String chatMessage = msg.message;
             UpdateTextArea(chatMessage);
+            UpdateTextArea("\t\t"+new Date().toString());
         }
 
         if (msg.mType.equals(Values.OBJECTTYPE_LIST_PROTOCOL)) {
@@ -162,13 +164,14 @@ public class Client implements Runnable {
                 x.add(" " + user);
             }
             cg.populateListView((ArrayList<String>) msg.obMessage);
+           
 
         }
 
         if (msg.mType.equals(Values.REQUEST_FILE_PROTOCOL)) {
             int response = JOptionPane.showConfirmDialog(null, msg.message + "\nDo you want to receive the file?");
             Message newMessage = new Message(Values.FILE_REQUEST_RESPONSE, Values.SERVER_USER_NAME, msg.recipent, msg.obMessage);
-            newMessage.fileNumber=msg.fileNumber;
+            newMessage.fileNumber = msg.fileNumber;
             if (response == 0) {
                 newMessage.message = Values.FILE_REQUEST_YES;
             } else {
@@ -233,7 +236,7 @@ public class Client implements Runnable {
         }
 
     }
-    
+
     public static void UpdateTextArea(String displayMessage) throws IOException {
 
         cg.putToTA(displayMessage);

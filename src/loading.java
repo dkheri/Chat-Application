@@ -95,7 +95,6 @@ public class loading {
         if (retval == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             if (file == null) {
-                return;
             }
 //                if (file.isDirectory())
 ////                 

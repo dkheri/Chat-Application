@@ -68,21 +68,19 @@ public class AcceptClient extends Thread {
     }
 
     public void sendMessage(Message msg, ArrayList<String> listofuser) {
-        for (String list : listofuser) {
-            for (String loggedin : CServer.loginNames) {
-                if (list.equals(loggedin)) {
-                    Message m = new Message(Values.TEXT_PROTOCOL, loggedin, msg.sender, msg.message);
-                    int i = CServer.loginNames.indexOf(loggedin);
-                    sendMessage(m, i);
-                }
-            }
-        }
+        listofuser.forEach((list) -> {
+            CServer.loginNames.stream().filter((loggedin) -> (list.equals(loggedin))).forEachOrdered((loggedin) -> {
+                Message m = new Message(Values.TEXT_PROTOCOL, loggedin, msg.sender, msg.message);
+                int i = CServer.loginNames.indexOf(loggedin);
+                sendMessage(m, i);
+            });
+        });
     }
 
     public void sendFile(Message msg, ArrayList<String> list) {
         for (String lUsers : list) {
             for (String loggedin : CServer.loginNames) {
-                if (list.equals(loggedin)) {
+                if (lUsers.equals(loggedin)) {
                     Message newMsge = new Message(Values.REQUEST_FILE_PROTOCOL, msg.recipent, Values.SERVER_USER_NAME, msg.message);
                     newMsge.fileNumber = (Object) CServer.messageBuffer.size();
                     CServer.messageBuffer.add(msg);
@@ -175,14 +173,16 @@ public class AcceptClient extends Thread {
                 break;
             }
             case Values.SAVE_CHAT_HISTORY_PROTOCOL: {
+                System.out.print((String )msg.obMessage);
+                System.out.print(msg.message);
                 saveChat(msg.sender, msg.message);
+                break;
             }
             case Values.LOGIN_PROTOCOL: {
                 String userTemp = msg.sender;
                 char[] passtemp = (char[]) msg.obMessage;
                 User tempUser = new User(userTemp, passtemp);
                 Message newMsge;
-                Message chatHistory;
                 Message message = new Message(Values.CONNECTIN_PROTOCOL, "");
                 message.message = msg.sender;
                 for (User checkUser : CServer.users) {
@@ -194,9 +194,7 @@ public class AcceptClient extends Thread {
                             sendMessage(newMsge, CServer.loginNames.indexOf(msg.sender));
                             //////////////////*/*/********
                             loadChat(msg.sender);
-
                         }
-
                         Message a = new Message(Values.OBJECTTYPE_LIST_PROTOCOL, msg.sender, Values.SERVER_USER_NAME, CServer.loginNames);
                         updateLists(a);
                         return;
@@ -256,7 +254,9 @@ public class AcceptClient extends Thread {
     public static void saveChat(String Username, String ChatMessage) {
         File userFile = null;
         try {
-            userFile = new File("../ChatHistory/" + Username + ".txt");
+            File directory= new File("ChatHistory/");
+            if(!directory.exists()) directory.mkdir();
+                userFile = new File(directory.getAbsolutePath()+"/"+ Username + ".txt");
             if (!userFile.exists()) {
                 userFile.createNewFile();
             }
@@ -266,6 +266,7 @@ public class AcceptClient extends Thread {
 
         try (PrintWriter out = new PrintWriter(userFile);) {
             out.println(ChatMessage);
+            System.out.println(ChatMessage);
         } catch (Exception exe) {
             System.out.println(exe);
         }
@@ -273,7 +274,7 @@ public class AcceptClient extends Thread {
     }
 
     private void loadChat(String userName) {
-        File chatFile = new File("../ChatHistory/" + userName + ".txt");
+        File chatFile = new File("ChatHistory/" + userName + ".txt");
         String chat = "";
         try (Scanner in = new Scanner(chatFile);) {
             while (in.hasNextLine()) {
