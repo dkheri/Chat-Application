@@ -17,9 +17,11 @@ public class Client implements Runnable {
     static void disconnect() {
         try {
             String tyString = Values.DISCONNECT_PROTOCOL;
-            String mesString = "";
-            Message m = new Message(tyString, Values.SERVER_USER_NAME, cg.getUserName(), "");
-            obout.writeObject(m);
+            cg.clearTextArea();
+            Message disconnectMessage = new Message(tyString, Values.SERVER_USER_NAME, cg.getUserName(), "");
+            Message saveChatHistoryMessage = new Message(Values.SAVE_CHAT_HISTORY_PROTOCOL, Values.SERVER_USER_NAME, cg.getUserName(), cg.getTA());
+            obout.writeObject(saveChatHistoryMessage);
+            obout.writeObject(disconnectMessage);
             obin.close();
             obout.close();
         } catch (IOException ex) {
@@ -68,7 +70,7 @@ public class Client implements Runnable {
         Message SentMsg;
         try {
             String messageTxt = message;
-            String sender = from;
+            String sender = to;
             List userList = l;
             File fileObj = f;
             boolean fileValid = false;
@@ -146,6 +148,12 @@ public class Client implements Runnable {
             UpdateTextArea(displayMessage);
         }
 
+        if(msg.mType.equals(Values.CHAT_HISTORY_PROTOCOL))
+        {
+            String chatMessage=msg.message;
+            UpdateTextArea(chatMessage);
+        }
+
         if (msg.mType.equals(Values.OBJECTTYPE_LIST_PROTOCOL)) {
             // ArrayList<String> x=(ArrayList<String>)msg.obMessage;
             ArrayList<String> x = new ArrayList<>();
@@ -202,7 +210,7 @@ public class Client implements Runnable {
         double sizeMb = (file.length()) / (1024 * 1024);
         double limit = 5.0;
         if (Double.compare(sizeMb, limit) > 0) {
-            JOptionPane.showMessageDialog(null, "File is too large to be sent!\n File not sent!!!");
+            JOptionPane.showMessageDialog(null, "File is too large to be sent!\n File not Attached!!!");
             return false;
         } else {
             return true;
@@ -225,7 +233,7 @@ public class Client implements Runnable {
         }
 
     }
-
+    
     public static void UpdateTextArea(String displayMessage) throws IOException {
 
         cg.putToTA(displayMessage);

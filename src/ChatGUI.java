@@ -441,6 +441,12 @@ public class ChatGUI extends javax.swing.JFrame {
 
     }
 
+    void clearTextArea()
+    {
+        taMsgs.setText("");
+    }
+
+
     List<String> getSelectedUsers() {
         List<String> list = listUsers.getSelectedValuesList();
         return list;
@@ -449,6 +455,12 @@ public class ChatGUI extends javax.swing.JFrame {
     public File getFile() {
         return selectedFile;
     }
+
+    public String getTA()
+    {
+        return taMsgs.getText();
+    }
+
 
     public String getSendTextArea() {
         return txtgetM.getText();

@@ -16,6 +16,7 @@ public class User {
     private final String username;
     private final char[] password;
     private String currentAdress;
+    private String textHistory;/////////////////////////////////change******//
 
     public User(String username, char[] pass) {
         this.username = username;
