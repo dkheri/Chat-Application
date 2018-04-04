@@ -68,7 +68,7 @@ public class Client implements Runnable {
         Message SentMsg;
         try {
             String messageTxt = message;
-            String sender = to;
+            String sender = from;
             List userList = l;
             File fileObj = f;
             boolean fileValid = false;

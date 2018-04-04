@@ -55,6 +55,8 @@ public class AcceptClient extends Thread {
     }
 
     private void sendMessage(Message msg, int ortIndex) {
+
+//        System.out.println(msg);
         try {
 //            System.out.println(msg);
             CServer.outputstreams.get(ortIndex).reset();
@@ -69,25 +71,9 @@ public class AcceptClient extends Thread {
         for (String list : listofuser) {
             for (String loggedin : CServer.loginNames) {
                 if (list.equals(loggedin)) {
-                    Message m = new Message(Values.TEXT_PROTOCOL, loggedin, msg.sender, msg.message);
+                    Message m = new Message(Values.TEXT_PROTOCOL, list, msg.sender, msg.message);
                     int i = CServer.loginNames.indexOf(loggedin);
                     sendMessage(m, i);
-                }
-            }
-        }
-    }
-
-    public void sendFile(Message msg, ArrayList<String> list) {
-        for (String lUsers : list) {
-            for (String loggedin : CServer.loginNames) {
-                if (list.equals(loggedin)) {
-                    Message newMsge = new Message(Values.REQUEST_FILE_PROTOCOL, msg.recipent, Values.SERVER_USER_NAME, msg.message);
-                    newMsge.fileNumber = (Object) CServer.messageBuffer.size();
-                    CServer.messageBuffer.add(msg);
-                    CServer.REQUEST_PENDING++;
-                    sendMessage(newMsge, CServer.loginNames.indexOf(lUsers));
-                    System.out.println("Requestion sent to" + lUsers);
-                    break;
                 }
             }
         }
@@ -103,7 +89,6 @@ public class AcceptClient extends Thread {
     public void recMessage(Message msg) {
         switch (msg.mType) {
             case Values.CONNECTIN_PROTOCOL: {
-
                 break;
             }
             case Values.TEXT_PROTOCOL: {
